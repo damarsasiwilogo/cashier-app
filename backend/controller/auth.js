@@ -49,3 +49,63 @@ exports.handleRegister = async (req, res) => {
     });
   }
 };
+
+exports.handleLogin = async (req, res) => {
+  const { identity: identity, password } = req.body;
+
+  try {
+    const account = await Account.findOne({
+      where: {
+        [Op.or]: {
+          username: identity,
+          email: identity,
+          password,
+        },
+      },
+    });
+
+    if (!account) {
+      res.status(401).json({
+        ok: false,
+        message: "Your username/password is incorrect Broo!!",
+      });
+      return;
+    }
+
+    const isValid = await bcrypt.compare(password, account.password);
+    if (!isValid) {
+      res.status(401).json({
+        ok: false,
+        message: "Your username/password is incorrect Broo!!",
+      });
+      return;
+    }
+
+    const payload = { id: account.id, userRole: account.userRole };
+    const token = jwt.sign(payload, JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    const response = {
+      token,
+      profile: {
+        username: account.username,
+        email: account.email,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        userRole: account.userRole,
+        photoProfile: account.photoProfile,
+      },
+    };
+
+    res.status(200).json({
+      ok: true,
+      message: response,
+    });
+  } catch (err) {
+    res.status(500).json({
+      ok: false,
+      message: String(err),
+    });
+  }
+};
