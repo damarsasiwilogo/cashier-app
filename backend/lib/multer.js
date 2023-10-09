@@ -19,7 +19,7 @@ const fileFilter = (req, file, cb) => {
       cb(null, true);
       break;
     default:
-      cb(new Error("Invalid format type"));
+      cb(new Error("Invalid format type Broo!!"));
       break;
   }
 };
