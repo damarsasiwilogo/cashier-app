@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("accounts", {
+    await queryInterface.createTable("Accounts", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -27,6 +27,9 @@ module.exports = {
       userRole: {
         type: Sequelize.ENUM("admin", "cashier"),
       },
+      photoProfile: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -38,6 +41,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("accounts");
+    await queryInterface.dropTable("Accounts");
   },
 };
