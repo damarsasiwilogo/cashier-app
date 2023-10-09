@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { Op } = require("sequelize");
+const fs = require("fs");
 const { Account } = require("../models");
 
 const JWT_SECRET_KEY = "ini_JWT_loh";
@@ -101,6 +103,33 @@ exports.handleLogin = async (req, res) => {
     res.status(200).json({
       ok: true,
       message: response,
+    });
+  } catch (err) {
+    res.status(500).json({
+      ok: false,
+      message: String(err),
+    });
+  }
+};
+
+exports.handleUploadPhoto = async (req, res) => {
+  const { filename } = req.file;
+  const { id: accountId } = req.user;
+
+  try {
+    const profile = await Account.findOne({
+      where: { accountId },
+    });
+
+    if (profile.photoProfile) {
+      fs.rmSync(__dirname + "/../public/" + profile.photoProfile);
+    }
+    profile.photoProfile = filename;
+    await profile.save();
+
+    res.json({
+      ok: true,
+      message: "Your profile photo updated Broo!!",
     });
   } catch (err) {
     res.status(500).json({
