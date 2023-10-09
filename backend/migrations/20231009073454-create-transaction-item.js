@@ -12,14 +12,14 @@ module.exports = {
       productId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Product",
+          model: "products",
           key: "id",
         },
       },
       transactionId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Transaction",
+          model: "transactions",
           key: "id",
         },
       },
