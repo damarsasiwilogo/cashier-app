@@ -11,5 +11,10 @@ router.post(
   multerUpload.multerUpload.single("image"),
   productController.handleCreateProduct
 );
+router.delete(
+  "/:productId",
+  authMiddleware.validateToken,
+  productController.handleInActive
+);
 
 module.exports = router;
