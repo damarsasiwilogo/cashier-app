@@ -9,7 +9,7 @@ router.post("/", authController.handleLogin);
 router.patch(
   "/account",
   authMiddleware.validateToken,
-  // authController.updateProfile
+  authController.updateProfile
 );
 router.post(
   "/account/picture",

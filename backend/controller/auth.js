@@ -6,52 +6,6 @@ const { Account } = require("../models");
 
 const JWT_SECRET_KEY = "ini_jwt_loh";
 
-exports.handleRegister = async (req, res) => {
-  const { username, password, email, firstName, lastName, userRole } = req.body;
-
-  const existingAccount = await Account.findOne({
-    where: {
-      [Op.or]: [{ username }, { email }],
-    },
-  });
-
-  if (existingAccount) {
-    return res.status(400).json({
-      ok: false,
-      message: "Username or email is already registered",
-    });
-  }
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
-
-    const result = await Account.create({
-      username,
-      password: hashPassword,
-      email,
-      firstName,
-      lastName,
-      userRole,
-    });
-    res.json({
-      ok: true,
-      data: {
-        username: result.username,
-        email: result.email,
-        firstName: result.firstName,
-        lastName: result.lastName,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      ok: false,
-      message: String(err),
-    });
-  }
-};
-
 exports.handleLogin = async (req, res) => {
   const { identity: identity, password } = req.body;
 
@@ -106,6 +60,44 @@ exports.handleLogin = async (req, res) => {
     });
   } catch (err) {
     res.status(401).json({
+      ok: false,
+      message: String(err),
+    });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  const accountId = req.user.id;
+  const { email, username } = req.body;
+  try {
+    const account = await Account.findByPK(accountId);
+    if (!account) {
+      res.status(400).json({
+        ok: false,
+        message: "Account not found Broo!!",
+      });
+      return;
+    }
+    if (email) {
+      account.email = email;
+    }
+    if (username) {
+      account.username = username;
+    }
+    await account.save();
+
+    return res.json({
+      ok: true,
+      data: {
+        username: account.username,
+        email: account.email,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        userRole: account.userRole,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
       ok: false,
       message: String(err),
     });

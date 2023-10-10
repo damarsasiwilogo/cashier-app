@@ -20,3 +20,19 @@ router.delete(
     productController.handleDeleteCategory);
 
 module.exports = router;
+
+const multerUpload = require("../lib/multer");
+
+router.post(
+  "/create",
+  authMiddleware.validateToken,
+  multerUpload.multerUpload.single("image"),
+  productController.handleCreateProduct
+);
+router.delete(
+  "/:productId",
+  authMiddleware.validateToken,
+  productController.handleInActive
+);
+
+module.exports = router;
