@@ -105,7 +105,7 @@ exports.handleLogin = async (req, res) => {
       message: response,
     });
   } catch (err) {
-    res.status(500).json({
+    res.status(401).json({
       ok: false,
       message: String(err),
     });
