@@ -13,16 +13,20 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  account.init({
-    username: DataTypes.STRING,
-    password: DataTypes.STRING,
-    email: DataTypes.STRING,
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
-    userRole: DataTypes.ENUM
-  }, {
-    sequelize,
-    modelName: 'account',
-  });
-  return account;
+  Account.init(
+    {
+      username: DataTypes.STRING,
+      password: DataTypes.STRING,
+      email: DataTypes.STRING,
+      firstName: DataTypes.STRING,
+      lastName: DataTypes.STRING,
+      userRole: DataTypes.ENUM("admin", "cashier"),
+      photoProfile: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "Account",
+    }
+  );
+  return Account;
 };
