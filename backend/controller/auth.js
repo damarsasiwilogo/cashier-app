@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const fs = require("fs");
 const { Account } = require("../models");
 
-const JWT_SECRET_KEY = "ini_JWT_loh";
+const JWT_SECRET_KEY = "ini_jwt_loh";
 
 exports.handleRegister = async (req, res) => {
   const { username, password, email, firstName, lastName, userRole } = req.body;
@@ -118,7 +118,7 @@ exports.handleUploadPhoto = async (req, res) => {
 
   try {
     const profile = await Account.findOne({
-      where: { accountId },
+      where: { id: accountId },
     });
 
     if (profile.photoProfile) {
