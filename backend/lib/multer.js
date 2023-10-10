@@ -13,7 +13,7 @@ const fileFilter = (req, file, cb) => {
   const { mimetype } = file;
 
   switch (mimetype) {
-    case "image/jpeg":
+    case "image/jpg":
     case "image/png":
     case "image/gif":
       cb(null, true);
