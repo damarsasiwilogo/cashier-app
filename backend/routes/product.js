@@ -29,6 +29,12 @@ router.post(
   multerUpload.multerUpload.single("image"),
   productController.handleCreateProduct
 );
+router.patch(
+  "/:productId",
+  authMiddleware.validateToken,
+  multerUpload.multerUpload.single("image"),
+  productController.handleUpdateProduct
+);
 router.delete(
   "/:productId",
   authMiddleware.validateToken,
