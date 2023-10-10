@@ -11,11 +11,11 @@ const app = express();
 app.use(express.json());
 
 const authRouter = require("./routes/auth");
-// const productRouter = require("./routes/product");
+const productRouter = require("./routes/product");
 
 // Routing
 app.use("/auth", authRouter);
-// app.use("/product", productRouter);
+app.use("/product", productRouter);
 
 // 404 middleware
 app.use((req, res) => {
