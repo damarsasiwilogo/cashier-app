@@ -29,7 +29,6 @@ import {
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
-import Logo from "../images/Kiefcie-removebg.png";
 
 const LinkItems = [
   { name: "Home", icon: FiHome },
@@ -120,14 +119,11 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
 
-      <Text
-        display={{ base: "flex", md: "none" }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold">
-        Logo
-      </Text>
-
+      <Image 
+        src="./Kiefcie.png" 
+        alt="Kiefcie Logo" 
+        boxSize="125px"
+      />
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
           size="lg"
