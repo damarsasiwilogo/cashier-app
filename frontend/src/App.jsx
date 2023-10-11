@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setInitialData } from "./slices/userSlice";
 import { useToast } from "@chakra-ui/react";
+import AddProductPage from "./pages/AddProduct";
 import { Login } from "./pages/Login";
 // import api from "./api";
 
@@ -14,6 +15,7 @@ function App() {
         <Route
           path="/Login/"
           element={<Login />}/>
+        <Route path="/add-product/" element={<AddProductPage />}/>
       </Routes>
     </>
   );
