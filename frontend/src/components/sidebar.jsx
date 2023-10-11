@@ -29,12 +29,12 @@ import {
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
-import Logo from "../images/Kiefcie-removebg.png";
+import { Link } from "react-router-dom";
 
 const LinkItems = [
-  { name: "Home", icon: FiHome },
+  { name: "Home", icon: FiHome, ref: "/" },
   { name: "Add Cashier", icon: FiPlusSquare },
-  { name: "Add Product", icon: FiPlusSquare },
+  { name: "Add Product", icon: FiPlusSquare, ref: "/add-product"},
   { name: "Add Category", icon: FiPlusSquare },
   { name: "Settings", icon: FiSettings },
 ];
@@ -56,7 +56,10 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem
+          key={link.name}
+          icon={link.icon}
+          href={link.ref}>
           {link.name}
         </NavItem>
       ))}
@@ -64,11 +67,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
   );
 };
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, href, children, ...rest }) => {
   return (
     <Box
-      as="a"
-      href="#"
+      as={Link}
+      to={href}
       style={{ textDecoration: "none" }}
       _focus={{ boxShadow: "none" }}
     >
@@ -122,15 +125,13 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
 
-      <Text
+      <Image
         display={{ base: "flex", md: "none" }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
-
+        src="./Kiefcie.png" 
+        alt="Kiefcie Logo" 
+        boxSize="125px">
+      </Image>
+      
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
           size="lg"
