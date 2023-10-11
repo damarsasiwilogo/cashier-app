@@ -119,11 +119,13 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
 
-      <Image 
+      <Image
+        display={{ base: "flex", md: "none" }}
         src="./Kiefcie.png" 
         alt="Kiefcie Logo" 
-        boxSize="125px"
-      />
+        boxSize="125px">
+      </Image>
+      
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
           size="lg"
