@@ -12,10 +12,12 @@ app.use(express.json());
 
 const authRouter = require("./routes/auth");
 const productRouter = require("./routes/product");
+const cashierRouter = require("./routes/cashier");
 
 // Routing
 app.use("/auth", authRouter);
 app.use("/product", productRouter);
+app.use("/cashier", cashierRouter);
 
 // 404 middleware
 app.use((req, res) => {

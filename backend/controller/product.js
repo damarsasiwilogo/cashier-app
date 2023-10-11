@@ -3,7 +3,7 @@ const { Product, Category } = require("../models");
 
 exports.handleCreateProduct = async (req, res, file) => {
   const { name, price, category, description, isActive } = req.body;
-  const { filename } = req.file;
+  const { filename } = file;
 
   try {
     const product = await Product.create({
@@ -74,7 +74,6 @@ exports.handleUpdateProduct = async (req, res) => {
       data: responseObj,
       msg: `Update event with id ${productId} success!`,
     });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -153,7 +152,7 @@ exports.handleUpdateCategory = async (req, res) => {
       message: String(error),
     });
   }
-}
+};
 
 exports.handleDeleteCategory = async (req, res) => {
   const { id } = req.params;
@@ -172,7 +171,7 @@ exports.handleDeleteCategory = async (req, res) => {
       message: String(error),
     });
   }
-}
+};
 
 exports.handleViewProductListPagination = async (req, res) => {
   const { page } = req.params;
@@ -199,7 +198,7 @@ exports.handleViewProductListPagination = async (req, res) => {
       message: String(error),
     });
   }
-}
+};
 
 exports.handleFilterProductByCategory = async (req, res) => {
   const { category } = req.params;
@@ -222,7 +221,7 @@ exports.handleFilterProductByCategory = async (req, res) => {
       message: String(error),
     });
   }
-}
+};
 
 exports.handleFilterProductByName = async (req, res) => {
   const { name } = req.params;
@@ -245,7 +244,7 @@ exports.handleFilterProductByName = async (req, res) => {
       message: String(error),
     });
   }
-}
+};
 
 exports.handleSortProductAlphabetically = async (req, res) => {
   const { order } = req.query;
@@ -253,9 +252,7 @@ exports.handleSortProductAlphabetically = async (req, res) => {
 
   try {
     const product = await Product.findAll({
-      order: [
-        ["name", sortOrder],
-      ],
+      order: [["name", sortOrder]],
     });
     res.status(200).json({
       status: "success",
@@ -269,7 +266,7 @@ exports.handleSortProductAlphabetically = async (req, res) => {
       message: String(error),
     });
   }
-}
+};
 
 exports.handleSortProductByPrice = async (req, res) => {
   const { order } = req.query;
@@ -277,9 +274,7 @@ exports.handleSortProductByPrice = async (req, res) => {
 
   try {
     const product = await Product.findAll({
-      order: [
-        ["price", sortOrder],
-      ],
+      order: [["price", sortOrder]],
     });
     res.status(200).json({
       status: "success",
@@ -293,4 +288,4 @@ exports.handleSortProductByPrice = async (req, res) => {
       message: String(error),
     });
   }
-}
+};

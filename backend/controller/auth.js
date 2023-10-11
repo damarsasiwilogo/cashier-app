@@ -56,7 +56,8 @@ exports.handleLogin = async (req, res) => {
 
     res.status(200).json({
       ok: true,
-      message: response,
+      message: "Login is success Broo!!",
+      data: response,
     });
   } catch (err) {
     res.status(401).json({
@@ -68,9 +69,11 @@ exports.handleLogin = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const accountId = req.user.id;
-  const { email, username } = req.body;
+  const { username, password, email, firstName, lastName } = req.body;
+
   try {
     const account = await Account.findByPK(accountId);
+
     if (!account) {
       res.status(400).json({
         ok: false,
@@ -78,23 +81,26 @@ exports.updateProfile = async (req, res) => {
       });
       return;
     }
-    if (email) {
-      account.email = email;
-    }
-    if (username) {
-      account.username = username;
-    }
+
+    account.username = username;
+    account.password = password;
+    account.email = email;
+    account.firstName = firstName;
+    account.lastName = lastName;
     await account.save();
 
-    return res.json({
+    const response = {
+      username: account.username,
+      password: account.password,
+      email: account.email,
+      firstName: account.firstName,
+      lastName: account.lastName,
+    };
+
+    res.status(200).json({
       ok: true,
-      data: {
-        username: account.username,
-        email: account.email,
-        firstName: account.firstName,
-        lastName: account.lastName,
-        userRole: account.userRole,
-      },
+      message: "Your account is updated Broo!!",
+      data: response,
     });
   } catch (err) {
     res.status(400).json({
