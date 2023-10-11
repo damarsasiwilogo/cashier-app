@@ -9,10 +9,11 @@ import {
   Select,
   Button,
 } from "@chakra-ui/react";
+import SidebarWithHeader from "../components/sidebar";
 
 const AddProductPage = () => {
   return (
-    <Container>
+    <SidebarWithHeader>
       <Stack spacing="24px" textAlign="center">
         <Text fontsize="36px">Create Product</Text>
         <FormControl>
@@ -31,7 +32,7 @@ const AddProductPage = () => {
           <Switch id="active" />
         </FormControl>
       </Stack>
-    </Container>
+    </SidebarWithHeader>
   );
 };
 export default AddProductPage;
