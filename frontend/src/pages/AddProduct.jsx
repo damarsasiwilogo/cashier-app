@@ -9,7 +9,6 @@ import {
   Select,
   Button,
   Box,
-  SidebarWithHeader,
 } from "@chakra-ui/react";
 import SidebarWithHeader from "../components/sidebar";
 
