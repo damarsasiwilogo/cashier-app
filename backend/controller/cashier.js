@@ -7,8 +7,7 @@ const { Account } = require("../models");
 const JWT_SECRET_KEY = "ini_jwt_loh";
 
 exports.handleCreateCashier = async (req, res) => {
-  const { username, password, email, firstName, lastName, userRole, isActive } =
-    req.body;
+  const { username, password, email, firstName, lastName, isActive } = req.body;
   try {
     const cashier = await Account.create({
       username,
@@ -16,19 +15,19 @@ exports.handleCreateCashier = async (req, res) => {
       email,
       firstName,
       lastName,
-      userRole,
+      userRole: "cashier",
       isActive,
     });
     res.json({
       ok: true,
       data: {
-        username: Account.username,
-        password: Account.password,
-        email: Account.email,
-        firstName: Account.firstName,
-        lastName: Account.lastName,
-        userRole: Account.userRole,
-        isActive: Account.isActive,
+        username: cashier.username,
+        password: cashier.password,
+        email: cashier.email,
+        firstName: cashier.firstName,
+        lastName: cashier.lastName,
+        userRole: cashier.userRole,
+        isActive: cashier.isActive,
       },
       msg: "New Account Created!",
     });
