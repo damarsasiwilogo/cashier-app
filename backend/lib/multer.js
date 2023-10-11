@@ -29,6 +29,6 @@ exports.multerUpload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 10000000,
+    fileSize: 1000000,
   },
 });
