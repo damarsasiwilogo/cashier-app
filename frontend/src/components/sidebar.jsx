@@ -20,7 +20,6 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-  Image,
 } from '@chakra-ui/react'
 import {
   FiHome,
@@ -52,7 +51,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       h="full"
       {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Image src="./Kiefcie.png" alt="Kiefcie Logo" boxSize="100px" />
+        <Image src="./Kiefcie.png" alt="Kiefcie Logo" boxSize="150px" />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
