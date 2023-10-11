@@ -9,12 +9,13 @@ import {
   FormLabel,
   Heading,
   HStack,
+  Image,
   Input,
   Link,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { Logo } from "./Login/Logo";
+import Logo from "../images/Kiefcie-removebg.png";
 import { OAuthButtonGroup } from "./Login/OAuthButtonGroup";
 import { PasswordField } from "./Login/PasswordField";
 
@@ -40,11 +41,14 @@ export const Login = () => (
         <Stack
           spacing="6"
           alignItems="center">
-          <Avatar
+          {/* <Avatar
             size="lg"
             bg="blue.600"
+          /> */}
+          <Image
+            src={Logo}
+            boxSize="300px"
           />
-          {/* <Logo /> */}
           <Stack
             spacing={{
               base: "2",
