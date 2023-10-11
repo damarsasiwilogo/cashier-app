@@ -29,11 +29,12 @@ import {
   FiBell,
   FiChevronDown,
 } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const LinkItems = [
-  { name: "Home", icon: FiHome },
+  { name: "Home", icon: FiHome, ref: "/" },
   { name: "Add Cashier", icon: FiPlusSquare },
-  { name: "Add Product", icon: FiPlusSquare },
+  { name: "Add Product", icon: FiPlusSquare, ref: "/add-product"},
   { name: "Add Category", icon: FiPlusSquare },
   { name: "Settings", icon: FiSettings },
 ];
@@ -56,7 +57,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {LinkItems.map((link) => (
         <NavItem
           key={link.name}
-          icon={link.icon}>
+          icon={link.icon}
+          href={link.ref}>
           {link.name}
         </NavItem>
       ))}
@@ -64,11 +66,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
   );
 };
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, href, children, ...rest }) => {
   return (
     <Box
-      as="a"
-      href="#"
+      as={Link}
+      to={href}
       style={{ textDecoration: "none" }}
       _focus={{ boxShadow: "none" }}>
       <Flex
@@ -178,7 +180,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
   );
 };
 
-const SidebarWithHeader = () => {
+const SidebarWithHeader = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -206,6 +208,7 @@ const SidebarWithHeader = () => {
         ml={{ base: 0, md: 60 }}
         p="4">
         {/* Content */}
+        {props.children}
       </Box>
     </Box>
   );
