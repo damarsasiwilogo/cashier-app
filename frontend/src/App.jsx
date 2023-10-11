@@ -12,8 +12,10 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/Login/" element={<Login />}></Route>
-        <Route path="/add-product/" element={<AddProductPage />}></Route>
+        <Route
+          path="/Login/"
+          element={<Login />}/>
+        <Route path="/add-product/" element={<AddProductPage />}/>
       </Routes>
     </>
   );
