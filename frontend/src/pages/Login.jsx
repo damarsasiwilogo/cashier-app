@@ -39,28 +39,18 @@ function Login() {
 
   //connect db.json when registered user submit on login modal
   const handleLogin = (values, forms) => {
+    console.log("test");
     api
-      .get(`/auth?q=${values.username}`)
+      .post(`/auth`, {
+        identity: values.username,
+        password: values.password,
+      })
       .then((res) => {
         const { data } = res;
-        const filteredUser = data
-          .filter((user) => {
-            return user.username === values.username;
-          })
-          .filter((user) => user.password === values.password);
-        if (filteredUser.length === 0) {
-          toast({
-            status: "error",
-            title: "Login failed",
-            description: "incorrect username or password",
-            isClosable: true,
-            duration: 5000,
-          });
-          forms.setSubmitting(false);
-          return;
-        }
-        const [userProfile] = filteredUser;
+        const userProfile = data.data.profile;
+        const token = data.data.token;
         dispatch(login(userProfile));
+        localStorage.setItem("token", token);
 
         toast({
           status: "success",
@@ -152,7 +142,7 @@ function Login() {
             }}>
             <Stack spacing="6">
               <Formik
-                initialValues={{ username: "" }}
+                initialValues={{ username: "", password: "" }}
                 validationSchema={loginSchema}
                 onSubmit={handleLogin}>
                 {({ isSubmitting }) => (
@@ -184,7 +174,15 @@ function Login() {
                           </FormControl>
                         )}
                       </Field>
-                      <PasswordField />
+                      <Field name="password">
+                        {({ field, form }) => (
+                          <PasswordField
+                            field={field}
+                            form={form}
+                            isSubmitting={isSubmitting}
+                          />
+                        )}
+                      </Field>
                     </Stack>
                     <HStack
                       justify="space-between"
