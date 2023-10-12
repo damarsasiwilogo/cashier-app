@@ -45,6 +45,7 @@ exports.handleLogin = async (req, res) => {
     const response = {
       token,
       profile: {
+        id: account.id,
         username: account.username,
         email: account.email,
         firstName: account.firstName,
@@ -131,6 +132,44 @@ exports.handleUploadPhoto = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
+      ok: false,
+      message: String(err),
+    });
+  }
+};
+
+exports.getAccountProfile = async (req, res) => {
+  const { id: accountId } = req.user;
+
+  try {
+    const profile = await Account.findOne({
+      where: { id: accountId },
+    });
+
+    if (!profile) {
+      res.status(400).json({
+        ok: false,
+        message: "Account not found Broo!!",
+      });
+      return;
+    }
+
+    const response = {
+      username: profile.username,
+      email: profile.email,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      userRole: profile.userRole,
+      photoProfile: profile.photoProfile,
+    };
+
+    res.status(200).json({
+      ok: true,
+      message: "Your account profile Broo!!",
+      data: response,
+    });
+  } catch (err) {
+    res.status(400).json({
       ok: false,
       message: String(err),
     });

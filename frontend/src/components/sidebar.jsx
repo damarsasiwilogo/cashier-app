@@ -29,6 +29,8 @@ import {
   FiCalendar,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from '../api';
 
 const LinkItems = [
   { name: "Home", icon: FiHome, ref: "/" },
@@ -39,6 +41,27 @@ const LinkItems = [
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userId = user.id;  // Replace with the actual user ID
+        const response = await api.get(`/auth/account/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+        setUser(response.data);  // Set the fetched user data
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <Box
       transition="3s ease"
@@ -104,6 +127,38 @@ const NavItem = ({ icon, href, children, ...rest }) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }) => {
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedProfile = localStorage.getItem('profile');
+        const userId = storedProfile ? JSON.parse(storedProfile).id : null;
+        
+        // If userId is not available, log an error and return to prevent API call
+        if (!userId) {
+          console.error("User ID not available");
+          return;
+        }
+
+        const response = await api.get(`/auth/account/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+        if (response.data.ok) {
+          setUser(response.data.data);
+        } else {
+          console.error("Error fetching user data:", response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+}, []);
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -121,33 +176,21 @@ const MobileNav = ({ onOpen, ...rest }) => {
         onClick={onOpen}
         variant="outline"
         aria-label="open menu"
-        icon={<FiMenu />}
-      />
+        icon={<FiMenu />} />
 
       <Image
         display={{ base: "flex", md: "none" }}
-<<<<<<<<< Temporary merge branch 1
-        src="./Kiefcie.png" 
-        alt="Kiefcie Logo" 
+        src="./Kiefcie.png"
+        alt="Kiefcie Logo"
         boxSize="125px">
       </Image>
-      
-=========
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
 
->>>>>>>>> Temporary merge branch 2
-      <HStack spacing={{ base: "0", md: "6" }}>
+    <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
           size="lg"
           variant="ghost"
           aria-label="open menu"
-          icon={<FiBell />}
-        />
+          icon={<FiBell />} />
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton
@@ -158,19 +201,16 @@ const MobileNav = ({ onOpen, ...rest }) => {
               <HStack>
                 <Avatar
                   size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
-                />
+                  src={"https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"} />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{user ? user.firstName + ' ' + user.lastName : 'Loading...'}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {user ? user.userRole : 'Loading...'}
                   </Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
