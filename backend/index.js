@@ -3,11 +3,13 @@ require("dotenv").config({
 });
 // import express
 const express = require("express"); // create an instance of the express application.
+const cors = require("cors");
 const PORT = 8000;
 
 const sql = require("mysql2");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const authRouter = require("./routes/auth");
