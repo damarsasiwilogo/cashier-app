@@ -20,7 +20,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
 import {
   FiHome,
   FiPlusSquare,
@@ -49,10 +49,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
       w={{ base: "full", md: 60 }}
       pos="fixed"
       h="full"
-      {...rest}>
+      {...rest}
+    >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Image src="./Kiefcie.png" alt="Kiefcie Logo" boxSize="150px" />
-        <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
+        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
         <NavItem
@@ -72,7 +73,8 @@ const NavItem = ({ icon, href, children, ...rest }) => {
       as={Link}
       to={href}
       style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}>
+      _focus={{ boxShadow: "none" }}
+    >
       <Flex
         align="center"
         p="4"
@@ -84,7 +86,8 @@ const NavItem = ({ icon, href, children, ...rest }) => {
           bg: "cyan.400",
           color: "white",
         }}
-        {...rest}>
+        {...rest}
+      >
         {icon && (
           <Icon
             mr="4"
@@ -112,7 +115,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue("gray.200", "gray.700")}
       justifyContent={{ base: "space-between", md: "flex-end" }}
-      {...rest}>
+      {...rest}
+    >
       <IconButton
         display={{ base: "flex", md: "none" }}
         onClick={onOpen}
@@ -140,7 +144,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
             <MenuButton
               py={2}
               transition="all 0.3s"
-              _focus={{ boxShadow: "none" }}>
+              _focus={{ boxShadow: "none" }}
+            >
               <HStack>
                 <Avatar
                   size={"sm"}
@@ -152,11 +157,10 @@ const MobileNav = ({ onOpen, ...rest }) => {
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
                   spacing="1px"
-                  ml="2">
+                  ml="2"
+                >
                   <Text fontSize="sm">Justina Clark</Text>
-                  <Text
-                    fontSize="xs"
-                    color="gray.600">
+                  <Text fontSize="xs" color="gray.600">
                     Admin
                   </Text>
                 </VStack>
@@ -167,7 +171,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
             </MenuButton>
             <MenuList
               bg={useColorModeValue("white", "gray.900")}
-              borderColor={useColorModeValue("gray.200", "gray.700")}>
+              borderColor={useColorModeValue("gray.200", "gray.700")}
+            >
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuDivider />
@@ -184,9 +189,7 @@ const SidebarWithHeader = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box
-      minH="100vh"
-      bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
@@ -197,16 +200,15 @@ const SidebarWithHeader = (props) => {
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        size="full">
+        size="full"
+      >
         <DrawerContent>
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box
-        ml={{ base: 0, md: 60 }}
-        p="4">
+      <Box ml={{ base: 0, md: 60 }} p="4">
         {/* Content */}
         {props.children}
       </Box>
