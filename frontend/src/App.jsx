@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setInitialData } from "./slices/userSlice";
 import { useToast } from "@chakra-ui/react";
 import AddProductPage from "./pages/AddProduct";
-import { Login } from "./pages/Login";
+import Login from "./pages/Login";
 import { HomePage } from "./pages/HomePage";
 import { ShowProduct } from "./pages/ShowProduct";
 // import api from "./api";

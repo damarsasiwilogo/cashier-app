@@ -1,51 +1,56 @@
 import {
   FormControl,
+  FormErrorMessage,
   FormLabel,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
-  useDisclosure,
-  useMergeRefs,
-} from '@chakra-ui/react'
-import { forwardRef, useRef } from 'react'
-import { HiEye, HiEyeOff } from 'react-icons/hi'
+  chakra,
+  InputLeftElement,
+} from "@chakra-ui/react";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import { Field, Form, Formik } from "formik";
+import { FaLock } from "react-icons/fa";
+import * as yup from "yup";
+import YupPassword from "yup-password";
+import { useState } from "react";
+YupPassword(yup);
 
-export const PasswordField = forwardRef((props, ref) => {
-  const { isOpen, onToggle } = useDisclosure()
-  const inputRef = useRef(null)
-  const mergeRef = useMergeRefs(inputRef, ref)
-  const onClickReveal = () => {
-    onToggle()
-    if (inputRef.current) {
-      inputRef.current.focus({
-        preventScroll: true,
-      })
-    }
-  }
+const CFaLock = chakra(FaLock);
+
+export const PasswordField = ({ isSubmitting, form, field }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <FormControl>
-      <FormLabel htmlFor="password">Password</FormLabel>
+    <FormControl
+      isInvalid={form.errors.password && form.touched.password}
+      isDisabled={isSubmitting}>
+      <FormLabel>Password</FormLabel>
       <InputGroup>
-        <InputRightElement>
-          <IconButton
-            variant="text"
-            aria-label={isOpen ? 'Mask password' : 'Reveal password'}
-            icon={isOpen ? <HiEyeOff /> : <HiEye />}
-            onClick={onClickReveal}
-          />
-        </InputRightElement>
+        <InputLeftElement
+          pointerEvents="none"
+          color="gray.300"
+          children={<CFaLock color="gray.300" />}
+        />
         <Input
           id="password"
-          ref={mergeRef}
           name="password"
-          type={isOpen ? 'text' : 'password'}
-          autoComplete="current-password"
+          type={isOpen ? "text" : "password"}
           required
-          {...props}
+          {...field}
         />
+        <InputRightElement>
+          <IconButton
+            variant="ghost"
+            aria-label={isOpen ? "Mask password" : "Reveal password"}
+            icon={isOpen ? <HiEyeOff /> : <HiEye />}
+            onClick={() => {
+              setIsOpen((open) => !open);
+            }}
+          />
+        </InputRightElement>
       </InputGroup>
+      <FormErrorMessage>{form.errors.password}</FormErrorMessage>
     </FormControl>
-  )
-})
-PasswordField.displayName = 'PasswordField'
+  );
+};
