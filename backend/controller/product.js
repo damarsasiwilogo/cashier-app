@@ -231,10 +231,10 @@ exports.sortProducts = (req, res, next) => {
   const { sortBy, order } = req.query;
 
   // Validate sortBy and order
-  if (!['name', 'category'].includes(sortBy)) {
+  if (!['name', 'category', 'price'].includes(sortBy)) {
     return res.status(400).json({
       status: 'error',
-      message: 'Invalid sortBy parameter. Use "name" or "category".',
+      message: 'Invalid sortBy parameter. Use "name", "category", or "price".',
     });
   }
 
