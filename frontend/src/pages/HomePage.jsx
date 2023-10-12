@@ -4,7 +4,8 @@ import SidebarWithHeader from '../components/sidebar.jsx';
 export const HomePage = () => {
   return (
     <div>
-      <SidebarWithHeader />
+      <SidebarWithHeader>
+      </SidebarWithHeader>
     </div>
   );
 };
