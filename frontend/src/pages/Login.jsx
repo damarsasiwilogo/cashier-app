@@ -31,11 +31,15 @@ import { login } from "../slices/userSlice";
 import { Field, Form, Formik } from "formik";
 import { FaUserAlt } from "react-icons/fa";
 // import { OAuthButtonGroup } from "./Login/OAuthButtonGroup";
+import { HomePage } from "./HomePage";
+import { useNavigate } from "react-router-dom";
+
 const CFaUserAlt = chakra(FaUserAlt);
 
 function Login() {
   const toast = useToast();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //connect db.json when registered user submit on login modal
   const handleLogin = (values, forms) => {
@@ -59,6 +63,7 @@ function Login() {
           duration: 1000,
           onCloseComplete: () => {
             forms.resetForm();
+            navigate("/");
           },
         });
       })
