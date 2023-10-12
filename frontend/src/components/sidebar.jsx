@@ -34,7 +34,7 @@ import { Link } from "react-router-dom";
 const LinkItems = [
   { name: "Home", icon: FiHome, ref: "/" },
   { name: "Add Cashier", icon: FiPlusSquare },
-  { name: "Add Product", icon: FiPlusSquare, ref: "/add-product"},
+  { name: "Add Product", icon: FiPlusSquare, ref: "/add-product" },
   { name: "Add Category", icon: FiPlusSquare, ref: "/add-category" },
   { name: "Settings", icon: FiSettings },
 ];
@@ -56,10 +56,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem
-          key={link.name}
-          icon={link.icon}
-          href={link.ref}>
+        <NavItem key={link.name} icon={link.icon} href={link.ref}>
           {link.name}
         </NavItem>
       ))}
@@ -127,21 +124,11 @@ const MobileNav = ({ onOpen, ...rest }) => {
 
       <Image
         display={{ base: "flex", md: "none" }}
-<<<<<<<<< Temporary merge branch 1
-        src="./Kiefcie.png" 
-        alt="Kiefcie Logo" 
-        boxSize="125px">
-      </Image>
-      
-=========
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
+        src="./Kiefcie.png"
+        alt="Kiefcie Logo"
+        boxSize="125px"
+      ></Image>
 
->>>>>>>>> Temporary merge branch 2
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton
           size="lg"
