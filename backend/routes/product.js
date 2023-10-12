@@ -40,5 +40,11 @@ router.delete(
   authMiddleware.validateToken,
   productController.handleInActive
 );
+router.get(
+  "/:page", 
+  authMiddleware.validateToken,
+  productController.sortProducts,
+  productController.getProducts
+  );
 
 module.exports = router;
