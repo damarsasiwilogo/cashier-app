@@ -7,6 +7,7 @@ import { useToast } from "@chakra-ui/react";
 import AddProductPage from "./pages/AddProduct";
 import { Login } from "./pages/Login";
 import { HomePage } from "./pages/HomePage";
+import { AddCategoryPage } from "./pages/AddCategory";
 // import api from "./api";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/Login/" element={<Login />}/>
         <Route path="/" element={<HomePage />}/>
         <Route path="/add-product/" element={<AddProductPage />}/>
+        <Route path="/add-category/" element={<AddCategoryPage />}/>
       </Routes>
     </>
   );

@@ -34,8 +34,8 @@ import { Link } from "react-router-dom";
 const LinkItems = [
   { name: "Home", icon: FiHome, ref: "/" },
   { name: "Add Cashier", icon: FiPlusSquare },
-  { name: "Add Product", icon: FiPlusSquare, ref: "/add-product" },
-  { name: "Add Category", icon: FiPlusSquare },
+  { name: "Add Product", icon: FiPlusSquare, ref: "/add-product"},
+  { name: "Add Category", icon: FiPlusSquare, ref: "/add-category" },
   { name: "Settings", icon: FiSettings },
 ];
 

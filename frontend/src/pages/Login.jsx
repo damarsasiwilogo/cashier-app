@@ -41,10 +41,6 @@ export const Login = () => (
         <Stack
           spacing="6"
           alignItems="center">
-          {/* <Avatar
-            size="lg"
-            bg="blue.600"
-          /> */}
           <Image
             src={Logo}
             boxSize="300px"
@@ -97,7 +93,11 @@ export const Login = () => (
               <PasswordField />
             </Stack>
             <HStack justify="space-between">
-              <Checkbox defaultChecked>Remember me</Checkbox>
+              <Checkbox
+                defaultChecked
+                colorScheme="red">
+                Remember me
+              </Checkbox>
               <Button
                 variant="text"
                 size="sm">
@@ -105,7 +105,12 @@ export const Login = () => (
               </Button>
             </HStack>
             <Stack spacing="6">
-              <Button>Sign in</Button>
+              <Button
+                loadingText="Signing In"
+                type="submit"
+                colorScheme="red">
+                Sign in
+              </Button>
             </Stack>
           </Stack>
         </Box>
