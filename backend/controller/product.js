@@ -7,21 +7,21 @@ exports.handleCreateProduct = async (req, res, file) => {
 
   try {
     const product = await Product.create({
-      image: filename,
       name,
       description,
       price,
       category,
+      image: filename,
       isActive,
     });
     res.json({
       ok: true,
       data: {
-        image: product.image,
         name: product.name,
         description: product.description,
         price: product.price,
         category: product.category,
+        image: product.image,
         isActive: product.isActive,
       },
       msg: "New Product Created!",
