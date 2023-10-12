@@ -1,10 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  //Registration
-  users: [],
-  totalData: 0,
-  isLoaded: false,
   //Login
   isLoggedIn: window.localStorage.getItem("isLoggedIn") === "true",
   profile: window.localStorage.getItem("profile")
@@ -16,16 +12,6 @@ const accountSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    //Registration
-    setInitialData(state, action) {
-      state.users = action.payload;
-      state.totalData = action.payload.length.length;
-      state.isLoaded = true;
-    },
-    add(state, action) {
-      state.users.push(action.payload);
-      state.totalData++;
-    },
     //Login
     login(state, action) {
       state.isLoggedIn = true;
@@ -42,5 +28,5 @@ const accountSlice = createSlice({
   },
 });
 
-export const { setInitialData, add, login, logout } = accountSlice.actions;
+export const { login, logout } = accountSlice.actions;
 export default accountSlice.reducer;
