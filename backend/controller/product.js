@@ -173,119 +173,84 @@ exports.handleDeleteCategory = async (req, res) => {
   }
 };
 
-exports.handleViewProductListPagination = async (req, res) => {
-  const { page } = req.params;
-  const { limit } = req.query;
-  const offset = (page - 1) * limit;
+exports.getProducts = async (req, res) => {
+  const { page } = req.params;  // Extracting page from route parameters
+  const limit = 5;
+
+  // Validate and parse page
+  const pageNumber = parseInt(page, 10);
+  if (isNaN(pageNumber) || pageNumber < 1) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid page number.',
+    });
+  }
 
   try {
-    const product = await Product.findAndCountAll({
-      limit: Number(limit),
-      offset: Number(offset),
+    // Retrieve products from database sorted and paginated
+    const { count, rows: products } = await Product.findAndCountAll({
       where: {
         isActive: true,
       },
+      order: [
+        [req.sorting.sortBy, req.sorting.order]  // Use sorting parameters from middleware
+      ],
+      limit: limit,
+      offset: (pageNumber - 1) * limit
     });
+
+    // Calculate total pages
+    const totalPages = Math.ceil(count / limit);
+
+    // Send the retrieved products as JSON
     res.status(200).json({
-      status: "success",
+      status: 'success',
       data: {
-        product,
+        products,
+        pagination: {
+          totalItems: count,
+          totalPages: totalPages,
+          currentPage: pageNumber,
+          itemsPerPage: limit
+        }
       },
     });
-  } catch {
-    res.status(400).json({
-      status: "error",
-      message: String(error),
-    });
-  }
-};
 
-exports.handleFilterProductByCategory = async (req, res) => {
-  const { category } = req.params;
-
-  try {
-    const product = await Product.findAll({
-      where: {
-        category,
-      },
-    });
-    res.status(200).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
-  } catch {
-    res.status(400).json({
-      status: "error",
-      message: String(error),
-    });
-  }
-};
-
-exports.handleFilterProductByName = async (req, res) => {
-  const { name } = req.params;
-
-  try {
-    const product = await Product.findAll({
-      where: {
-        name,
-      },
-    });
-    res.status(200).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
-  } catch {
-    res.status(400).json({
-      status: "error",
-      message: String(error),
-    });
-  }
-};
-
-exports.handleSortProductAlphabetically = async (req, res) => {
-  const { order } = req.query;
-  const sortOrder = order === "desc" ? "DESC" : "ASC";
-
-  try {
-    const product = await Product.findAll({
-      order: [["name", sortOrder]],
-    });
-    res.status(200).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
   } catch (error) {
-    res.status(400).json({
-      status: "error",
-      message: String(error),
+    // Handle any errors during the database query
+    res.status(500).json({
+      status: 'error',
+      message: 'Database query failed.',
+      error: error.toString(),
     });
   }
 };
 
-exports.handleSortProductByPrice = async (req, res) => {
-  const { order } = req.query;
-  const sortOrder = order === "desc" ? "DESC" : "ASC";
+// Middleware to handle sorting
+exports.sortProducts = (req, res, next) => {
+  const { sortBy, order } = req.query;
 
-  try {
-    const product = await Product.findAll({
-      order: [["price", sortOrder]],
-    });
-    res.status(200).json({
-      status: "success",
-      data: {
-        product,
-      },
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: "error",
-      message: String(error),
+  // Validate sortBy and order
+  if (!['name', 'category', 'price'].includes(sortBy)) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid sortBy parameter. Use "name", "category", or "price".',
     });
   }
+
+  if (!['ASC', 'DESC'].includes(order.toUpperCase())) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid order parameter. Use "ASC" or "DESC".',
+    });
+  }
+
+  // Attach sorting parameters to request object
+  req.sorting = {
+    sortBy,
+    order: order.toUpperCase()
+  };
+
+  // Move to next middleware or route handler
+  next();
 };
