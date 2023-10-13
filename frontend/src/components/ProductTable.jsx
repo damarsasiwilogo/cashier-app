@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, Button } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, IconButton } from "@chakra-ui/react";
+import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import api from '../api'; // Ensure the path is correct
 
 function ProductTable() {
@@ -58,17 +59,20 @@ function ProductTable() {
           ))}
         </Tbody>
       </Table>
-      <Button 
-        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
-        ml={4}
-      >
-        Previous Page
-      </Button>
-      <Button 
-        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} // Ensure not exceeding max page
-      >
-        Next Page
-      </Button>
+      <IconButton 
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+          ml={4}
+          icon={<ArrowBackIcon />}
+          variant="ghost"
+          aria-label="Previous Page"
+      />
+      <IconButton 
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} // Ensure not exceeding max page
+          ml={4}
+          icon={<ArrowForwardIcon />}
+          variant="ghost"
+          aria-label="Next Page"
+      />
     </div>
   );
 }

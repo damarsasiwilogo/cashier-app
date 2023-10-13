@@ -142,6 +142,17 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
   const [user, setUser] = useState([]);
   const isLoggedIn = useSelector((state) => state.account.isLoggedIn);
   const baseURL = 'localhost:8000';
+  const navigate = useNavigate(); 
+
+  const signOut = () => {
+    // Clear user data from state
+    setUser(null);
+    // Clear any tokens or session data
+    localStorage.removeItem('token');
+    // Redirect to login or home page
+    navigate('/login');
+  };
+
 
   useEffect(() => {
     const fetchUserData = async () => {
