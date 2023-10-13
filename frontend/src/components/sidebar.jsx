@@ -125,6 +125,7 @@ const NavItem = ({ icon, href, children, ...rest }) => {
 
 const MobileNav = ({ onOpen, ...rest }) => {
   const [user, setUser] = useState([]);
+  const baseURL = 'localhost:8000';
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -198,7 +199,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
               <HStack>
                 <Avatar
                   size={"sm"}
-                  src={"https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"} />
+                  src={user ? `http://${baseURL}/static/${user.photoProfile}` : "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"} />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"
