@@ -28,7 +28,7 @@ import {
   FiChevronDown,
   FiCalendar,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from '../api';
 
@@ -126,6 +126,17 @@ const NavItem = ({ icon, href, children, ...rest }) => {
 const MobileNav = ({ onOpen, ...rest }) => {
   const [user, setUser] = useState([]);
   const baseURL = 'localhost:8000';
+  const navigate = useNavigate(); 
+
+  const signOut = () => {
+    // Clear user data from state
+    setUser(null);
+    // Clear any tokens or session data
+    localStorage.removeItem('token');
+    // Redirect to login or home page
+    navigate('/login');
+  };
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -223,7 +234,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
               <MenuItem>Profile</MenuItem>
               <MenuItem>Settings</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem onClick={signOut}>Sign Out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
