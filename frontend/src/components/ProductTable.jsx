@@ -10,7 +10,11 @@ function ProductTable() {
 
   useEffect(() => {
     // Fetch products from API
+    const token = localStorage.getItem('token');  // Retrieve token from local storage
     api.get(`/product/${currentPage}`, {
+      headers: {
+        Authorization: `Bearer ${token}` // Use token from local storage
+      },
       params: {
         sortBy: sortConfig.key,
         order: sortConfig.direction
@@ -23,8 +27,8 @@ function ProductTable() {
       .catch(error => {
         console.error("Error fetching products:", error);
       });
-  }, [currentPage, sortConfig]);
-
+  }, [currentPage, sortConfig]);  
+  
   const requestSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key && prev.direction === 'asc') {
