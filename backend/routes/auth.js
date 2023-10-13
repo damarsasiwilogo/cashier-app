@@ -17,5 +17,11 @@ router.post(
   multerUpload.single("file"),
   authController.handleUploadPhoto
 );
+router.get(
+  "/account/profile/:id",
+  authMiddleware.validateToken,
+  authController.getAccountProfile
+);
+
 
 module.exports = router;
