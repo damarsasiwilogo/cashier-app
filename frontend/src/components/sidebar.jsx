@@ -33,7 +33,6 @@ import { useEffect, useState } from "react";
 import api from "../api";
 import { logout } from "../slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import Login from "../pages/Login";
 
 const LinkItems = [
   { name: "Home", icon: FiHome, ref: "/" },
@@ -143,6 +142,7 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
   const isLoggedIn = useSelector((state) => state.account.isLoggedIn);
   const baseURL = 'localhost:8000';
   const navigate = useNavigate(); 
+  const dispatch = useDispatch();
 
   const signOut = () => {
     // Clear user data from state
@@ -183,8 +183,6 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
 
     fetchUserData();
   }, []);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (needLogin && !isLoggedIn) {
