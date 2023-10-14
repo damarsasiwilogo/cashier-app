@@ -83,11 +83,22 @@ exports.updateProfile = async (req, res) => {
       return;
     }
 
-    account.username = username;
-    account.password = password;
-    account.email = email;
-    account.firstName = firstName;
-    account.lastName = lastName;
+    if (username) {
+      account.username = username;
+    }
+    if (password) {
+      account.password = password;
+    }
+    if (email) {
+      account.email = email;
+    }
+    if (firstName) {
+      account.firstName = firstName;
+    }
+    if (lastName) {
+      account.lastName = lastName;
+    }
+
     await account.save();
 
     const response = {
