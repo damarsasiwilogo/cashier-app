@@ -1,13 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, IconButton } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import api from '../api'; // Ensure the path is correct
 
 function ProductTable() {
+  const [user, setUser] = useState(null); // Added state to manage user
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); // Added state to manage total pages
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedProfile = localStorage.getItem("profile");
+        const userId = storedProfile ? JSON.parse(storedProfile).id : null;
+
+        // If userId is not available, log an error and return to prevent API call
+        if (!userId) {
+          console.error("User ID not available");
+          return;
+        }
+
+        const response = await api.get(`/auth/account/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (response.data.ok) {
+          setUser(response.data.data);
+        } else {
+          console.error("Error fetching user data:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     // Fetch products from API
@@ -47,6 +78,7 @@ function ProductTable() {
             <Th cursor="pointer" onClick={() => requestSort('name')}>Name</Th>
             <Th cursor="pointer" onClick={() => requestSort('price')}>Price</Th>
             <Th>Description</Th>
+            <Th>Actions</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -55,6 +87,17 @@ function ProductTable() {
               <Td>{product.name}</Td>
               <Td>{product.price}</Td>
               <Td>{product.description}</Td>
+              {user && user.userRole === 'admin' && 
+              <Td>
+                <Button>Edit</Button>
+                <Button>Delete</Button>
+              </Td>
+              }
+              {user && user.userRole === 'cashier' &&
+              <Td>
+                <Button>View</Button>
+              </Td>
+              }
             </Tr>
           ))}
         </Tbody>
