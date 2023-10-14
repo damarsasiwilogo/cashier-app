@@ -3,7 +3,7 @@ const { Product, Category } = require("../models");
 
 exports.handleCreateProduct = async (req, res, file) => {
   const { name, price, category, description, isActive } = req.body;
-  const { filename } = file;
+  const { filename } = req.file;
 
   try {
     const product = await Product.create({
