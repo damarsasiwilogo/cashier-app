@@ -38,7 +38,7 @@ exports.validateToken = (req, res, next) => {
 };
 
 exports.checkUserRole = (req, res, next) => {
-  if (req.user.userRole !== "cashier") {
+  if (req.user.userRole === "cashier") {
     res.status(403).json({
       ok: false,
       message: "Forbidden Broo!!",
