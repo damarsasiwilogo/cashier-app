@@ -33,7 +33,6 @@ import { useEffect, useState } from "react";
 import api from "../api";
 import { logout } from "../slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import Login from "../pages/Login";
 
 const LinkItems = [
   { name: "Home", icon: FiHome, ref: "/" },
@@ -172,8 +171,6 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
 
     fetchUserData();
   }, []);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (needLogin && !isLoggedIn) {
