@@ -73,7 +73,7 @@ exports.updateProfile = async (req, res) => {
   const { username, password, email, firstName, lastName } = req.body;
 
   try {
-    const account = await Account.findByPK(accountId);
+    const account = await Account.findByPk(accountId);
 
     if (!account) {
       res.status(400).json({

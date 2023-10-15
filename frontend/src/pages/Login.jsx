@@ -154,7 +154,7 @@ function Login() {
                                 pointerEvents="none"
                                 children={<CFaUserAlt color="gray.300" />}
                               />
-                              <Input type="text" {...field} />
+                              <Input type="text" placeholder="Username" {...field} />
                             </InputGroup>
                             <FormErrorMessage>
                               {form.errors.username}
