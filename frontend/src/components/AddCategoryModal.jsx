@@ -14,22 +14,29 @@ const validationSchema = Yup.object().shape({
 
 function AddCategoryModal({ isOpen, onClose }) {
   // Handle form submission
-  const handleFormSubmit = (values, actions) => {
-    // Make API call to add the new category
-    api.post('/product/category', values) // Update '/category-endpoint' as per your API
-      .then(response => {
-        console.log('Category added:', response.data);
-        actions.setSubmitting(false);
-        onClose(); // Close the modal on success
-        // Optionally, show a success notification to the user
-      })
-      .catch(error => {
-        console.error('Error adding category:', error);
-        actions.setSubmitting(false);
-        actions.setStatus({ errorMsg: 'There was an error adding the category.' });
-        // Optionally, show an error notification to the user
-      });
-  };
+const handleFormSubmit = (values, actions) => {
+  // Get the token from local storage
+  const token = localStorage.getItem('token');
+
+  // Make API call to add the new category
+  api.post('/product/category', values, {
+    headers: {
+      Authorization: `Bearer ${token}`  // Add token to request headers
+    }
+  })
+  .then(response => {
+    console.log('Category added:', response.data);
+    actions.setSubmitting(false);
+    onClose(); // Close the modal on success
+    // Optionally, show a success notification to the user
+  })
+  .catch(error => {
+    console.error('Error adding category:', error);
+    actions.setSubmitting(false);
+    actions.setStatus({ errorMsg: 'There was an error adding the category.' });
+    // Optionally, show an error notification to the user
+  });
+};
 
   // Rest of your component code remains similar
   return (

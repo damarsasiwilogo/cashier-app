@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { ArrowBackIcon, ArrowForwardIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import api from '../api'; // Ensure the path is correct
 
 function ProductTable() {
@@ -100,8 +100,12 @@ function ProductTable() {
               <Td>{product.description}</Td>
               {user && user.userRole === 'admin' && 
               <Td>
-                <Button>Edit</Button>
-                <Button>Delete</Button>
+                <Button variant="solid" colorScheme="blue" size="sm" mx={1}>
+                  <EditIcon />
+                </Button>
+                <Button variant="solid" colorScheme="red" size="sm" mx={1}>
+                  <DeleteIcon />
+                </Button>
               </Td>
               }
               {user && user.userRole === 'cashier' &&
