@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import api from '../api'; // Ensure the path is correct
 
@@ -9,6 +9,7 @@ function ProductTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); // Added state to manage total pages
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+  const baseURL = "localhost:8000"
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -75,6 +76,7 @@ function ProductTable() {
       <Table variant="simple">
         <Thead>
           <Tr>
+            <Th>Image</Th>
             <Th cursor="pointer" onClick={() => requestSort('name')}>Name</Th>
             <Th cursor="pointer" onClick={() => requestSort('price')}>Price</Th>
             <Th>Description</Th>
@@ -84,6 +86,15 @@ function ProductTable() {
         <Tbody>
           {products.map((product, index) => (
             <Tr key={index}>
+              <Td>
+                <Image 
+                src={`http://${baseURL}/static/${product.image}`} 
+                alt={product.name} 
+                boxSize="75px" // Adjust size as needed
+                objectFit="cover"
+                fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
+                />
+              </Td>
               <Td>{product.name}</Td>
               <Td>{product.price}</Td>
               <Td>{product.description}</Td>
