@@ -65,7 +65,11 @@ const AddProductPage = () => {
       // };
 
       try {
-        await Axios.post("http://localhost:8000/product/create", formData);
+        await Axios.post("http://localhost:8000/product/create", formData, {
+          headers: {
+            Authorization: `Bearer token-login`,
+          },
+        });
 
         formik.setSubmitting(false);
       } catch (err) {
