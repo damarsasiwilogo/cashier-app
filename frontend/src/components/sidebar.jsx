@@ -143,6 +143,8 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.account.isLoggedIn);
   const baseURL = 'localhost:8000';
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUserData = async () => {
