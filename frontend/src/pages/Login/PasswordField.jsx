@@ -32,7 +32,7 @@ export const PasswordField = ({ isSubmitting, form, field }) => {
           children={<CFaLock color="gray.300" />}
         />
         <Input
-          type={isOpen ? "text" : "password"}
+          type={isOpen ? "text" : "password"} placeholder="Password"
           required
           {...field}
         />
