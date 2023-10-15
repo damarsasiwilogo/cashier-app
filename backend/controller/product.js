@@ -3,7 +3,7 @@ const { Product, Category } = require("../models");
 
 exports.handleCreateProduct = async (req, res, file) => {
   const { name, price, category, description, isActive } = req.body;
-  const { filename } = file;
+  const { filename } = req.file;
 
   try {
     const product = await Product.create({
@@ -175,7 +175,7 @@ exports.handleDeleteCategory = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   const { page } = req.params;  // Extracting page from route parameters
-  const limit = 5;
+  const limit = 10;
 
   // Validate and parse page
   const pageNumber = parseInt(page, 10);

@@ -1,10 +1,8 @@
 import {
-  Avatar,
   Box,
   Button,
   Checkbox,
   Container,
-  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -14,18 +12,14 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
   Stack,
-  Text,
   useToast,
   chakra,
 } from "@chakra-ui/react";
 import Logo from "../images/Kiefcie-removebg.png";
 import { PasswordField } from "./Login/PasswordField";
-import { addPointerInfo } from "framer-motion";
 import api from "../api";
 import { useDispatch } from "react-redux";
-import { useState } from "react";
 import * as yup from "yup";
 import { login } from "../slices/userSlice";
 import { Field, Form, Formik } from "formik";
@@ -101,13 +95,8 @@ function Login() {
           sm: "8",
         }}>
         <Stack spacing="8">
-          <Stack
-            spacing="6"
-            alignItems="center">
-            <Image
-              src={Logo}
-              boxSize="300px"
-            />
+          <Stack spacing="6" alignItems="center">
+            <Image src={Logo} boxSize="300px" />
             <Stack
               spacing={{
                 base: "2",
@@ -151,9 +140,7 @@ function Login() {
                 onSubmit={handleLogin}>
                 {({ isSubmitting }) => (
                   <Form>
-                    <Stack
-                      spacing="5"
-                      mb="2">
+                    <Stack spacing="5" mb="2">
                       <Field name="username">
                         {({ field, form }) => (
                           <FormControl
@@ -167,10 +154,7 @@ function Login() {
                                 pointerEvents="none"
                                 children={<CFaUserAlt color="gray.300" />}
                               />
-                              <Input
-                                type="text"
-                                {...field}
-                              />
+                              <Input type="text" placeholder="Username" {...field} />
                             </InputGroup>
                             <FormErrorMessage>
                               {form.errors.username}
@@ -188,17 +172,11 @@ function Login() {
                         )}
                       </Field>
                     </Stack>
-                    <HStack
-                      justify="space-between"
-                      mb="2">
-                      <Checkbox
-                        defaultChecked
-                        colorScheme="red">
+                    <HStack justify="space-between" mb="2">
+                      <Checkbox defaultChecked colorScheme="red">
                         Remember me
                       </Checkbox>
-                      <Button
-                        variant="text"
-                        size="sm">
+                      <Button variant="text" size="sm">
                         Forgot password?
                       </Button>
                     </HStack>

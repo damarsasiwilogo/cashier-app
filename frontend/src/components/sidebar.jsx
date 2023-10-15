@@ -75,26 +75,12 @@ const SidebarContent = ({ onClose, ...rest }) => {
       pos="fixed"
       h="full"
       {...rest}>
-      <Flex
-        h="20"
-        alignItems="center"
-        mx="8"
-        justifyContent="space-between">
-        <Image
-          src="./Kiefcie.png"
-          alt="Kiefcie Logo"
-          boxSize="150px"
-        />
-        <CloseButton
-          display={{ base: "flex", md: "none" }}
-          onClick={onClose}
-        />
+      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
+        <Image src="./Kiefcie.png" alt="Kiefcie Logo" boxSize="150px" />
+        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem
-          key={link.name}
-          icon={link.icon}
-          href={link.ref}>
+        <NavItem key={link.name} icon={link.icon} href={link.ref}>
           {link.name}
         </NavItem>
       ))}
@@ -139,20 +125,10 @@ const NavItem = ({ icon, href, children, ...rest }) => {
 
 const MobileNav = ({ onOpen, needLogin, ...rest }) => {
   const [user, setUser] = useState([]);
-  const isLoggedIn = useSelector((state) => state.account.isLoggedIn);
-  const baseURL = 'localhost:8000';
-  const navigate = useNavigate(); 
   const dispatch = useDispatch();
-
-  const signOut = () => {
-    // Clear user data from state
-    setUser(null);
-    // Clear any tokens or session data
-    localStorage.removeItem('token');
-    // Redirect to login or home page
-    navigate('/login');
-  };
-
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.account.isLoggedIn);
+  const baseURL = "localhost:8000";
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -186,7 +162,7 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
 
   useEffect(() => {
     if (needLogin && !isLoggedIn) {
-      navigate("/Login");
+      navigate("/login");
     }
   }, [needLogin, isLoggedIn]);
 
@@ -235,7 +211,11 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
                   <HStack>
                     <Avatar
                       size={"sm"}
-                      src={user ? `http://${baseURL}/static/${user.photoProfile}` : "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"}
+                      src={
+                        user
+                          ? `http://${baseURL}/static/${user.photoProfile}`
+                          : "https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
+                      }
                     />
                     <VStack
                       display={{ base: "none", md: "flex" }}
@@ -247,9 +227,7 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
                           ? user.firstName + " " + user.lastName
                           : "Loading..."}
                       </Text>
-                      <Text
-                        fontSize="xs"
-                        color="gray.600">
+                      <Text fontSize="xs" color="gray.600">
                         {user ? user.userRole : "Loading..."}
                       </Text>
                     </VStack>
@@ -258,10 +236,13 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
                     </Box>
                   </HStack>
                 </MenuButton>
-                <MenuList
-                  bg={backGround}
-                  borderColor={backGround}>
-                  <MenuItem>Profile</MenuItem>
+                <MenuList bg={backGround} borderColor={backGround}>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/profile");
+                    }}>
+                    Profile
+                  </MenuItem>
                   <MenuItem>Settings</MenuItem>
                   <MenuDivider />
                   <MenuItem
@@ -276,10 +257,7 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
           </HStack>
         </Flex>
       ) : (
-        <Navigate
-          to="/Login"
-          replace
-        />
+        <Navigate to="/login" replace />
       )}
     </>
   );
@@ -289,9 +267,7 @@ const SidebarWithHeader = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box
-      minH="100vh"
-      bg={useColorModeValue("gray.100", "gray.900")}>
+    <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
@@ -309,9 +285,7 @@ const SidebarWithHeader = (props) => {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box
-        ml={{ base: 0, md: 60 }}
-        p="4">
+      <Box ml={{ base: 0, md: 60 }} p="4">
         {/* Content */}
         {props.children}
       </Box>

@@ -1,13 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, IconButton } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image } from "@chakra-ui/react";
+import { ArrowBackIcon, ArrowForwardIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import api from '../api'; // Ensure the path is correct
 
 function ProductTable() {
+  const [user, setUser] = useState(null); // Added state to manage user
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); // Added state to manage total pages
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+  const baseURL = "localhost:8000"
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedProfile = localStorage.getItem("profile");
+        const userId = storedProfile ? JSON.parse(storedProfile).id : null;
+
+        // If userId is not available, log an error and return to prevent API call
+        if (!userId) {
+          console.error("User ID not available");
+          return;
+        }
+
+        const response = await api.get(`/auth/account/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (response.data.ok) {
+          setUser(response.data.data);
+        } else {
+          console.error("Error fetching user data:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     // Fetch products from API
@@ -44,17 +76,43 @@ function ProductTable() {
       <Table variant="simple">
         <Thead>
           <Tr>
+            <Th>Image</Th>
             <Th cursor="pointer" onClick={() => requestSort('name')}>Name</Th>
             <Th cursor="pointer" onClick={() => requestSort('price')}>Price</Th>
             <Th>Description</Th>
+            <Th>Actions</Th>
           </Tr>
         </Thead>
         <Tbody>
           {products.map((product, index) => (
             <Tr key={index}>
+              <Td>
+                <Image 
+                src={`http://${baseURL}/static/${product.image}`} 
+                alt={product.name} 
+                boxSize="75px" // Adjust size as needed
+                objectFit="cover"
+                fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
+                />
+              </Td>
               <Td>{product.name}</Td>
               <Td>{product.price}</Td>
               <Td>{product.description}</Td>
+              {user && user.userRole === 'admin' && 
+              <Td>
+                <Button variant="solid" colorScheme="blue" size="sm" mx={1}>
+                  <EditIcon />
+                </Button>
+                <Button variant="solid" colorScheme="red" size="sm" mx={1}>
+                  <DeleteIcon />
+                </Button>
+              </Td>
+              }
+              {user && user.userRole === 'cashier' &&
+              <Td>
+                <Button>View</Button>
+              </Td>
+              }
             </Tr>
           ))}
         </Tbody>

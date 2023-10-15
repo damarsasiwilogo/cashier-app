@@ -10,7 +10,6 @@ import {
   InputLeftElement,
 } from "@chakra-ui/react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
-import { Field, Form, Formik } from "formik";
 import { FaLock } from "react-icons/fa";
 import * as yup from "yup";
 import YupPassword from "yup-password";
@@ -33,9 +32,7 @@ export const PasswordField = ({ isSubmitting, form, field }) => {
           children={<CFaLock color="gray.300" />}
         />
         <Input
-          id="password"
-          name="password"
-          type={isOpen ? "text" : "password"}
+          type={isOpen ? "text" : "password"} placeholder="Password"
           required
           {...field}
         />
