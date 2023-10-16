@@ -174,6 +174,42 @@ exports.handleDeleteCategory = async (req, res) => {
   }
 };
 
+exports.getCategories = async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.status(200).json({
+      status: "success",
+      data: {
+        categories,
+      },
+    });
+  } catch {
+    res.status(400).json({
+      status: "error",
+      message: String(error),
+    });
+  }
+};
+
+exports.getCategoryById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const category = await Category.findByPk(id);
+    res.status(200).json({
+      status: "success",
+      data: {
+        category,
+      },
+    });
+  } catch {
+    res.status(400).json({
+      status: "error",
+      message: String(error),
+    });
+  }
+};
+
 exports.getProducts = async (req, res) => {
   const { page } = req.params;  // Extracting page from route parameters
   const limit = 10;
