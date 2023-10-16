@@ -65,9 +65,9 @@ const AddProductPage = () => {
       // };
 
       try {
-        await Axios.post("http://localhost:8000/cashier", formData, {
+        await Axios.post("http://localhost:8000/product/create", formData, {
           headers: {
-            Authorization: ` {{TOKEN}}`,
+            Authorization: `Bearer token-login`,
           },
         });
 
