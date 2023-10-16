@@ -70,7 +70,8 @@ exports.handleLogin = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const accountId = req.user.id;
-  const { username, password, email, firstName, lastName } = req.body;
+  const { username, password, email, firstName, lastName } =
+    req.body;
 
   try {
     const account = await Account.findByPk(accountId);
@@ -98,7 +99,10 @@ exports.updateProfile = async (req, res) => {
     if (lastName) {
       account.lastName = lastName;
     }
-
+    if (req.file) {
+      account.photoProfile = req.file.filename;
+    }
+    // account.photoProfile = filename;
     await account.save();
 
     const response = {
@@ -107,6 +111,7 @@ exports.updateProfile = async (req, res) => {
       email: account.email,
       firstName: account.firstName,
       lastName: account.lastName,
+      photoProfile: account.photoProfile,
     };
 
     res.status(200).json({
@@ -122,32 +127,32 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.handleUploadPhoto = async (req, res) => {
-  const { filename } = req.file;
-  const { id: accountId } = req.user;
+// exports.handleUploadPhoto = async (req, res) => {
+//   const { filename } = req.file;
+//   const { id: accountId } = req.user;
 
-  try {
-    const profile = await Account.findOne({
-      where: { id: accountId },
-    });
+//   try {
+//     const profile = await Account.findOne({
+//       where: { id: accountId },
+//     });
 
-    if (profile.photoProfile) {
-      fs.rmSync(__dirname + "/../public/" + profile.photoProfile);
-    }
-    profile.photoProfile = filename;
-    await profile.save();
+//     if (profile.photoProfile) {
+//       fs.rmSync(__dirname + "/../public/" + profile.photoProfile);
+//     }
+//     profile.photoProfile = filename;
+//     await profile.save();
 
-    res.json({
-      ok: true,
-      message: "Your profile photo updated Broo!!",
-    });
-  } catch (err) {
-    res.status(500).json({
-      ok: false,
-      message: String(err),
-    });
-  }
-};
+//     res.json({
+//       ok: true,
+//       message: "Your profile photo updated Broo!!",
+//     });
+//   } catch (err) {
+//     res.status(500).json({
+//       ok: false,
+//       message: String(err),
+//     });
+//   }
+// };
 
 exports.getAccountProfile = async (req, res) => {
   const { id: accountId } = req.user;
