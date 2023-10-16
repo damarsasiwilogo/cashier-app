@@ -26,6 +26,18 @@ router.delete(
   productController.handleDeleteCategory
 );
 
+router.get(
+  "/category",
+  authMiddleware.validateToken,
+  productController.getCategories
+);
+
+router.get(
+  "/category/:id",
+  authMiddleware.validateToken,
+  productController.getCategoryById
+);
+
 router.post(
   "/create",
   authMiddleware.validateToken,

@@ -30,34 +30,40 @@ import {
   FiCalendar,
 } from "react-icons/fi";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../api";
 import { logout } from "../slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const LinkItems = [
-  { name: "Home", icon: FiHome, ref: "/" },
-  { name: "Add Cashier", icon: FiPlusSquare },
-  { name: "Add Product", icon: FiPlusSquare, ref: "/add-product" },
-  { name: "Show Product", icon: FiCalendar, ref: "/show-product" },
-  { name: "Settings", icon: FiSettings },
-];
 // check if visitor is loogged in or not
 
 const SidebarContent = ({ onClose, ...rest }) => {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+
+  const LinkItems = [
+    { name: "Home", icon: FiHome, ref: "/" },
+    { name: "Add Cashier", icon: FiPlusSquare, show: role === 'admin' },
+    { name: "Add Product", icon: FiPlusSquare, ref: "/add-product", show: role === 'admin' },
+    { name: "Show Product", icon: FiCalendar, ref: "/show-product" },
+    { name: "Settings", icon: FiSettings },
+  ].filter(item => item.show !== false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userId = user.id; // Replace with the actual user ID
+        const userId = JSON.parse(localStorage.getItem("profile")).id; 
         const response = await api.get(`/auth/account/profile/${userId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
-        setUser(response.data); // Set the fetched user data
+        if (response.data.ok) {
+          setUser(response.data.data);
+          setRole(response.data.data.userRole);  // Assuming 'role' is a field in the user 
+        } else {
+          console.error("Error fetching user data:", response.data.message);
+        }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -135,8 +141,7 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const storedProfile = localStorage.getItem("profile");
-        const userId = storedProfile ? JSON.parse(storedProfile).id : null;
+        const userId = JSON.parse(localStorage.getItem("profile")).id;
 
         // If userId is not available, log an error and return to prevent API call
         if (!userId) {
