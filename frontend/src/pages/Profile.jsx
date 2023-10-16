@@ -9,7 +9,6 @@ import {
   InputRightElement,
   Stack,
   useColorModeValue,
-  HStack,
   Avatar,
   AvatarBadge,
   IconButton,
@@ -19,7 +18,7 @@ import {
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import SidebarWithHeader from "../components/sidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import { useFormik } from "formik";
@@ -33,6 +32,10 @@ export default function UserProfileEdit() {
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
+  // const [selectedFileName, setSelectedFileName] = useState();
+
+  const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -92,7 +95,9 @@ export default function UserProfileEdit() {
       data.append("firstName", values.firstName);
       data.append("lastName", values.lastName);
       if (values.photoProfile) data.append("photoProfile", values.photoProfile);
-      data.append("password", values.password);
+      if (values.password) {
+        data.append("password", values.password);
+      }
 
       const response = await api.patch(`/auth/account/`, data, {
         headers: {
@@ -101,6 +106,8 @@ export default function UserProfileEdit() {
       });
       if (response.data.ok) {
         // setSelectedFileName("");
+        passwordRef.current.value = "";
+        confirmPasswordRef.current.value = "";
         toast({
           title: "Profile Updated",
           description: "Your Profile is Updated",
@@ -131,65 +138,46 @@ export default function UserProfileEdit() {
           title: "Error",
           description: "An Error occured, please try again",
           status: "error",
-          duration: "1000",
+          duration: "3000",
           isClosable: "true",
         });
       }
     }
-    // api
-    //   .patch(`/auth/account`, {
-    //     identity: values.username,
-    //     password: values.password,
-    //   })
-    //   .then((res) => {
-    //     const { data } = res;
-    //     const userProfile = data.data.profile;
-    //     const token = data.data.token;
-    //     localStorage.setItem("token", token);
-
-    //     toast({
-    //       status: "success",
-    //       title: "Login is success",
-    //       isClosable: true,
-    //       duration: 1000,
-    //       onCloseComplete: () => {
-    //         forms.resetForm();
-    //         navigate("/");
-    //       },
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     toast({
-    //       status: "error",
-    //       title: "Something wrong",
-    //       description: error.message,
-    //       isClosable: true,
-    //       duration: 5000,
-    //     });
-    //     forms.resetForm();
-    //   });
   };
-
-  const formik = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-      confirmpassword: "",
-      email: "",
-      firstName: "",
-      lastName: "",
-    },
-    onSubmit: handleUpdate,
-  });
 
   const editSchema = yup.object().shape({
     username: yup.string(),
-    password: yup.string(),
-    confirmpassword: yup.string().oneOf([yup.ref("password"), ""]),
+    password: yup
+      .string()
+      .optional()
+      .matches(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/,
+        "Must Contain 6 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+      ),
+    confirmpassword: yup
+      .string()
+      .optional()
+      .oneOf([yup.ref("password"), ""], "Password don't match"),
     email: yup.string(),
     firstName: yup.string(),
     lastName: yup.string(),
   });
+
+  const profile = JSON.parse(localStorage.getItem("profile"));
+
+  const formik = useFormik({
+    initialValues: {
+      username: profile.username,
+      password: profile.password,
+      confirmpassword: profile.password,
+      email: profile.email,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+    },
+    editSchema,
+    handleUpdate,
+  });
+
   return (
     <SidebarWithHeader>
       <Flex minH={"80vh"} align={"center"} justify={"center"}>
@@ -228,22 +216,22 @@ export default function UserProfileEdit() {
                 </Avatar>
               </Center>
               <Center w="full">
-                <Button w="full">Change Photo Profile</Button>
+                <Button w="full">Change Profile Picture</Button>
               </Center>
             </Stack>
           </FormControl>
-          <FormControl id="username" isRequired>
+          <FormControl id="username" >
             <FormLabel>User Name</FormLabel>
             <Input
               placeholder="UserName"
               _placeholder={{ color: "gray.500" }}
               type="text"
               name="username"
-              onChange={formik.handleUpdate}
+              onChange={formik.handleChange}
               value={formik.values.username}
             />
           </FormControl>
-          <FormControl id="Password" isRequired>
+          <FormControl id="password" >
             <FormLabel>Password</FormLabel>
             <InputGroup>
               <Input
@@ -251,7 +239,7 @@ export default function UserProfileEdit() {
                 _placeholder={{ color: "gray.500" }}
                 type={isOpen ? "text" : "password"}
                 name="password"
-                onchange={formik.handleUpdate}
+                onchange={formik.handleChange}
                 value={formik.values.password}
               />
               <InputRightElement>
@@ -266,7 +254,7 @@ export default function UserProfileEdit() {
               </InputRightElement>
             </InputGroup>
           </FormControl>
-          <FormControl id="ConfirmPassword" isRequired>
+          <FormControl id="ConfirmPassword" >
             <FormLabel>Confirm Password</FormLabel>
             <InputGroup>
               <Input
@@ -274,8 +262,8 @@ export default function UserProfileEdit() {
                 _placeholder={{ color: "gray.500" }}
                 type={isOpen ? "text" : "password"}
                 name="confirmpassword"
-                onchange={formik.handleUpdate}
-                value={formik.values.password}
+                onchange={formik.handleChange}
+                value={formik.values.confirmpassword}
               />
               <InputRightElement>
                 <IconButton
@@ -289,28 +277,37 @@ export default function UserProfileEdit() {
               </InputRightElement>
             </InputGroup>
           </FormControl>
-          <FormControl id="email" isRequired>
+          <FormControl id="email" >
             <FormLabel>Email address</FormLabel>
             <Input
               placeholder="your-email@example.com"
               _placeholder={{ color: "gray.500" }}
               type="email"
+              name="email"
+              onChange={formik.handleChange}
+              value={formik.values.email}
             />
           </FormControl>
-          <FormControl id="firstName" isRequired>
+          <FormControl id="firstName" >
             <FormLabel>First Name</FormLabel>
             <Input
               placeholder="First Name"
               _placeholder={{ color: "gray.500" }}
               type="text"
+              name="firstName"
+              onChange={formik.handleChange}
+              value={formik.values.firstName}
             />
           </FormControl>
-          <FormControl id="lastName" isRequired>
+          <FormControl id="lastName" >
             <FormLabel>Last Name</FormLabel>
             <Input
               placeholder="Last Name"
               _placeholder={{ color: "gray.500" }}
               type="text"
+              name="lastName"
+              onChange={formik.handleChange}
+              value={formik.values.lastName}
             />
           </FormControl>
           <Stack spacing={6} direction={["column", "row"]}>
@@ -320,7 +317,7 @@ export default function UserProfileEdit() {
               w="full"
               _hover={{
                 bg: "blue.500",
-              }}>
+              }} onClick={handleUpdate}>
               Submit
             </Button>
             <Button
