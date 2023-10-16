@@ -13,7 +13,7 @@ exports.validateToken = (req, res, next) => {
   try {
     token = token.split(" ")[1];
     if (!token) {
-      res.status(403).json({
+      res.status(401).json({
         ok: false,
         message: "Invalid token or token is not found bro!!",
       });
@@ -30,7 +30,7 @@ exports.validateToken = (req, res, next) => {
     req.user = payload;
     next();
   } catch (err) {
-    res.status(401).json({
+    res.status(403).json({
       ok: false,
       message: String(err),
     });
