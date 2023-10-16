@@ -18,25 +18,20 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Axios from "axios";
 import SidebarWithHeader from "../components/sidebar";
+import api from "../api";
 
 const AddProductPage = () => {
   const toast = useToast();
 
   const [setUploadedFiles] = useState([]);
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: (acceptedFiles) => {
-      // Menggunakan useState untuk memperbarui state uploadedFiles
-      setUploadedFiles(acceptedFiles);
-    },
-  });
   const formik = useFormik({
     initialValues: {
       name: "",
       price: "",
       category: "",
       description: "",
-      image: "",
+      image: null,
       isActive: "",
     },
     validationSchema: Yup.object().shape({
@@ -46,7 +41,7 @@ const AddProductPage = () => {
       description: Yup.string().required(
         "please input the Product Description"
       ),
-      // image: Yup.mixed().required("please input the Product Image"),
+      image: Yup.mixed().required("please input the Product Image"),
     }),
     validateOnChange: false,
     onSubmit: async (value, forms) => {
@@ -55,19 +50,12 @@ const AddProductPage = () => {
       formData.append("price", value.price);
       formData.append("category", value.category);
       formData.append("description", value.description);
-      //ngepost ke database
-      // const input = {
-      //   name: value.name,
-      //   price: value.price,
-      //   category: value.category,
-      //   description: value.description,
-      //   image: value.image,
-      // };
+      formData.append("image", value.image);
 
       try {
         await Axios.post("http://localhost:8000/product/create", formData, {
           headers: {
-            Authorization: `Bearer token-login`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
 
@@ -87,6 +75,21 @@ const AddProductPage = () => {
       forms.resetForm();
     },
   });
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      // Menggunakan useState untuk memperbarui state uploadedFiles
+      setUploadedFiles(acceptedFiles);
+      formik.setFieldValue("image", acceptedFiles[0]);
+    },
+  });
+
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get("/");
+    } catch {}
+  };
+
   return (
     <SidebarWithHeader>
       <form
@@ -141,19 +144,21 @@ const AddProductPage = () => {
               alignItems="center"
               justifyContent="space-between"
             >
-              <div
-                {...getRootProps()}
-                className="dropzone"
-                style={{
-                  border: "2px dashes black",
-                  borderRadius: "4px",
-                  padding: "20px",
-                  cursor: "pointer",
-                }}
-              >
-                <input {...getInputProps()} />
-                <p>Drag 'n' drop some files here, or click to select files</p>
-              </div>
+              <Box>
+                <div
+                  {...getRootProps()}
+                  className="dropzone"
+                  style={{
+                    border: "2px dashed black",
+                    borderRadius: "4px",
+                    padding: "20px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <input {...getInputProps()} />
+                  <p>Drag 'n' drop some files here, or click to select files</p>
+                </div>
+              </Box>
               <FormErrorMessage>{formik.errors.image}</FormErrorMessage>
               <Box display="flex">
                 <FormLabel htmlFor="active" mb="0">
