@@ -9,19 +9,19 @@ router.post("/", authController.handleLogin);
 router.patch(
   "/account",
   authMiddleware.validateToken,
-  authController.updateProfile
-);
-router.post(
-  "/account/picture",
-  authMiddleware.validateToken,
   multerUpload.single("file"),
-  authController.handleUploadPhoto
+  authController.updateProfile
 );
 router.get(
   "/account/profile/:id",
   authMiddleware.validateToken,
   authController.getAccountProfile
 );
-
+// router.post(
+//   "/account/picture",
+//   authMiddleware.validateToken,
+//   multerUpload.single("file"),
+//   authController.handleUploadPhoto
+// );
 
 module.exports = router;
