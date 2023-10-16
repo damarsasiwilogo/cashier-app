@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 const { Product, Category } = require("../models");
 
 exports.handleCreateProduct = async (req, res, file) => {
@@ -186,12 +187,23 @@ exports.getProducts = async (req, res) => {
     });
   }
 
+  // Construct the where clause for the query
+  const whereConditions = {
+    isActive: true,
+  };
+
+  if (req.filtering.name) {
+    whereConditions.name = req.filtering.name;
+  }
+
+  if (req.filtering.category) {
+    whereConditions.category = req.filtering.category;
+  }
+
   try {
-    // Retrieve products from database sorted and paginated
+    // Retrieve products from database sorted, filtered, and paginated
     const { count, rows: products } = await Product.findAndCountAll({
-      where: {
-        isActive: true,
-      },
+      where: whereConditions,
       order: [
         [req.sorting.sortBy, req.sorting.order]  // Use sorting parameters from middleware
       ],
@@ -226,30 +238,81 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-// Middleware to handle sorting
+exports.getProductById = async (req, res) => {
+    try {
+        const { productId } = req.params; // Extracting product id from the URL parameter
+
+        // Fetching product details by ID
+        const product = await Product.findOne({
+            where: {
+                id: productId
+            },
+            include: [{
+                association: "Category"
+            }] // This will also fetch the associated category of the product
+        });
+
+        // If no product found
+        if (!product) {
+            return res.status(404).json({ message: "Product not found!" });
+        }
+
+        // Return product details
+        res.status(200).json(product);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "An error occurred while fetching product details." });
+    }
+};
+
+// Middleware to handle sorting & filtering
 exports.sortProducts = (req, res, next) => {
-  const { sortBy, order } = req.query;
+  const { sortBy, order, qname, qcat } = req.query;
 
-  // Validate sortBy and order
-  if (!['name', 'category', 'price'].includes(sortBy)) {
+  // Check if both sortBy and order are provided or neither is provided
+  if (!!sortBy !== !!order) {
     return res.status(400).json({
       status: 'error',
-      message: 'Invalid sortBy parameter. Use "name", "category", or "price".',
+      message: 'Both sortBy and order parameters must be provided.',
     });
   }
 
-  if (!['ASC', 'DESC'].includes(order.toUpperCase())) {
-    return res.status(400).json({
-      status: 'error',
-      message: 'Invalid order parameter. Use "ASC" or "DESC".',
-    });
+  // Validate sortBy and order if they are provided
+  if (sortBy && order) {
+    if (!['name', 'category', 'price'].includes(sortBy)) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid sortBy parameter. Use "name", "category", or "price".',
+      });
+    }
+
+    if (!['ASC', 'DESC'].includes(order.toUpperCase())) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid order parameter. Use "ASC" or "DESC".',
+      });
+    }
+
+    // Attach sorting parameters to request object
+    req.sorting = {
+      sortBy,
+      order: order.toUpperCase()
+    };
   }
 
-  // Attach sorting parameters to request object
-  req.sorting = {
-    sortBy,
-    order: order.toUpperCase()
-  };
+  // Validate and parse query parameters for filtering
+  const queryParams = { name: qname, category: qcat };
+  for (const [key, value] of Object.entries(queryParams)) {
+    if (value && typeof value !== 'string') {
+      return res.status(400).json({
+        status: 'error',
+        message: `Invalid ${key} parameter. Must be a string.`,
+      });
+    }
+  }
+
+  // Attach filtering parameters to request object
+  req.filtering = queryParams;
 
   // Move to next middleware or route handler
   next();

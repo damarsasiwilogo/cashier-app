@@ -52,5 +52,10 @@ router.get(
   productController.sortProducts,
   productController.getProducts
   );
+router.get(
+  "/detail/:productId",
+  authMiddleware.validateToken,
+  productController.getProductById
+);
 
 module.exports = router;

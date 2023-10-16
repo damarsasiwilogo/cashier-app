@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import ProductDetailModal from './ProductDetailModal';
 import api from '../api'; // Ensure the path is correct
 
 function ProductTable() {
@@ -9,13 +10,26 @@ function ProductTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); // Added state to manage total pages
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const baseURL = "localhost:8000"
+
+  const handleProductClick = (productId) => {
+    setSelectedProductId(productId);
+    setIsModalOpen(true);
+  };
+  
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProductId(null);
+  };
+
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const storedProfile = localStorage.getItem("profile");
-        const userId = storedProfile ? JSON.parse(storedProfile).id : null;
+        const userId = storedProfile ? JSON.parse(storedProfile).id : null;        
 
         // If userId is not available, log an error and return to prevent API call
         if (!userId) {
@@ -110,7 +124,7 @@ function ProductTable() {
               }
               {user && user.userRole === 'cashier' &&
               <Td>
-                <Button>View</Button>
+                <Button onClick={() => handleProductClick(product.id)}>View</Button>
               </Td>
               }
             </Tr>
@@ -130,6 +144,11 @@ function ProductTable() {
           icon={<ArrowForwardIcon />}
           variant="ghost"
           aria-label="Next Page"
+      />
+      <ProductDetailModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        productId={selectedProductId} 
       />
     </div>
   );
