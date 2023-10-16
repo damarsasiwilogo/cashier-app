@@ -22,7 +22,7 @@ import SidebarWithHeader from "../components/sidebar";
 const AddProductPage = () => {
   const toast = useToast();
 
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [setUploadedFiles] = useState([]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -65,7 +65,11 @@ const AddProductPage = () => {
       // };
 
       try {
-        await Axios.post("http://localhost:8000/product/create", formData);
+        await Axios.post("http://localhost:8000/product/create", formData, {
+          headers: {
+            Authorization: `Bearer token-login`,
+          },
+        });
 
         formik.setSubmitting(false);
       } catch (err) {
