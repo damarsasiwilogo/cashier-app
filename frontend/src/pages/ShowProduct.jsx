@@ -57,6 +57,11 @@ export const ShowProduct = () => {
                     <Button onClick={() => setShowModal(true)} colorScheme="teal" size="sm">
                         Add Category
                     </Button>}
+                    {user && user.userRole === 'cashier' &&
+                    <Button colorScheme="teal" size="sm">
+                        View Cart
+                    </Button>
+                    }
                 </HStack>
                 <ProductTable products={products} />
             </VStack>

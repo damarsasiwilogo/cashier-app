@@ -238,6 +238,33 @@ exports.getProducts = async (req, res) => {
   }
 };
 
+exports.getProductById = async (req, res) => {
+    try {
+        const { productId } = req.params; // Extracting product id from the URL parameter
+
+        // Fetching product details by ID
+        const product = await Product.findOne({
+            where: {
+                id: productId
+            },
+            include: [{
+                association: "Category"
+            }] // This will also fetch the associated category of the product
+        });
+
+        // If no product found
+        if (!product) {
+            return res.status(404).json({ message: "Product not found!" });
+        }
+
+        // Return product details
+        res.status(200).json(product);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "An error occurred while fetching product details." });
+    }
+};
+
 // Middleware to handle sorting & filtering
 exports.sortProducts = (req, res, next) => {
   const { sortBy, order, qname, qcat } = req.query;
