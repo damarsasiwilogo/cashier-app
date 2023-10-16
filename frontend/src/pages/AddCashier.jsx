@@ -36,10 +36,10 @@ const AddCashierPage = () => {
       formData.append("username", value.username);
       formData.append("password", value.password);
       formData.append("email", value.email);
-      formData.append("first name", value.firstName);
-      formData.append("last name", value.lastName);
+      formData.append("firstname", value.firstName);
+      formData.append("lastname", value.lastName);
       try {
-        await Axios.post("http://localhost:8000/", formData, {
+        await Axios.post("http://localhost:8000/cashier", formData, {
           headers: {
             Authorization: ` {{TOKEN}}`,
           },
@@ -69,7 +69,7 @@ const AddCashierPage = () => {
           <FormControl isInvalid={formik.errors.username}>
             <Input
               placeholder="Username"
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
+              onChange={(e) => formik.setFieldValue("username", e.target.value)}
               value={formik.values.username}
             />
             <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
@@ -77,7 +77,7 @@ const AddCashierPage = () => {
           <FormControl isInvalid={formik.errors.password}>
             <Input
               placeholder="Password"
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
+              onChange={(e) => formik.setFieldValue("password", e.target.value)}
               value={formik.values.password}
             />
             <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
@@ -85,7 +85,7 @@ const AddCashierPage = () => {
           <FormControl>
             <Input
               placeholder="Email"
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
+              onChange={(e) => formik.setFieldValue("email", e.target.value)}
               value={formik.values.email}
             />
             <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
@@ -93,7 +93,9 @@ const AddCashierPage = () => {
           <FormControl>
             <Input
               placeholder="First Name"
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
+              onChange={(e) =>
+                formik.setFieldValue("firstName", e.target.value)
+              }
               value={formik.values.firstName}
             />
             <FormErrorMessage>{formik.errors.firstName}</FormErrorMessage>
@@ -101,7 +103,7 @@ const AddCashierPage = () => {
           <FormControl>
             <Input
               placeholder="Last Name"
-              onChange={(e) => formik.setFieldValue("name", e.target.value)}
+              onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
               value={formik.values.lastName}
             />
             <FormErrorMessage>{formik.errors.lastName}</FormErrorMessage>
