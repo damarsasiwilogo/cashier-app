@@ -18,6 +18,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  useToast,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -127,6 +128,7 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
   const [user, setUser] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const toast = useToast();
   const isLoggedIn = useSelector((state) => state.account.isLoggedIn);
   const baseURL = "localhost:8000";
 
@@ -154,6 +156,26 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
+        if (error?.response?.status == 403) {
+          toast({
+            title: "Error fetching user data",
+            description: "Please login to continue",
+            status: "error",
+            duration: 1000,
+            isCloseable: true,
+            onCloseComplete() {
+              navigate("/login");
+            },
+          });
+        } else {
+          toast({
+            title: "Network Error.",
+            description: String(error),
+            status: "error",
+            isCloseable: true,
+            duration: 1000,
+          });
+        }
       }
     };
 
