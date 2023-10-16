@@ -7,119 +7,168 @@ import {
   FormErrorMessage,
   Button,
   useToast,
+  FormLabel,
 } from "@chakra-ui/react";
+import { PasswordField } from "./Login/PasswordField";
 import SidebarWithHeader from "../components/sidebar";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import Axios from "axios";
+import { Formik, Form, Field } from "formik";
+import * as yup from "yup";
+import api from "../api";
 
-const AddCashierPage = () => {
+function AddCashierPage() {
   const toast = useToast();
-  const formik = useFormik({
-    initialValues: {
-      username: "",
-      password: "",
-      email: "",
-      firstName: "",
-      lastName: "",
-    },
-    validationSchema: Yup.object().shape({
-      username: Yup.string().required("please input the username"),
-      password: Yup.string().required("please input the password"),
-      email: Yup.string().required("please input the email"),
-      firstName: Yup.string().required("please input the first name"),
-      lastName: Yup.mixed().required("please input the last name"),
-    }),
-    validateOnChange: false,
-    onSubmit: async (value, forms) => {
-      const formData = new FormData();
-      formData.append("username", value.username);
-      formData.append("password", value.password);
-      formData.append("email", value.email);
-      formData.append("firstname", value.firstName);
-      formData.append("lastname", value.lastName);
-      try {
-        await Axios.post("http://localhost:8000/cashier", formData, {
-          headers: {
-            Authorization: ` {{TOKEN}}`,
-          },
+
+  //connect db.json when registered user submit on login modal
+  const handleCashier = (values, forms) => {
+    console.log("test");
+
+    const formData = new FormData();
+
+    // Append the fields to the FormData object
+    formData.append("username", values.username);
+    formData.append("password", values.password);
+    formData.append("email", values.email);
+    formData.append("firstName", values.firstName);
+    formData.append("lastName", values.lastName);
+    api
+      .post(`/cashier`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+
+      .then((res) => {
+        toast({
+          status: "success",
+          title: "Create cashier is success",
+          isClosable: true,
+          duration: 1000,
         });
-
-        formik.setSubmitting(false);
-      } catch (err) {
-        formik.setSubmitting(false);
-        console.log(err);
-
+        forms.resetForm();
+      })
+      .catch((error) => {
         toast({
           status: "error",
           title: "Something wrong",
-          description: err.message,
+          description: error.message,
           isClosable: true,
-          duration: 3000,
+          duration: 5000,
         });
-      }
-      forms.resetForm();
-    },
+        forms.resetForm();
+      });
+  };
+
+  const cashierSchema = yup.object().shape({
+    username: yup.string().required("Username can't be empty"),
+    password: yup.string().required("Password can't be empty"),
+    email: yup.string().required("Email can't be empty"),
+    firstName: yup.string().required("First Name can't be empty"),
+    lastName: yup.string().required("Last Name can't be empty"),
   });
   return (
     <SidebarWithHeader>
       <Container>
         <Stack spacing="24px" textAlign="center">
           <Text fontSize="36px">Add Cashier</Text>
-          <FormControl isInvalid={formik.errors.username}>
-            <Input
-              placeholder="Username"
-              onChange={(e) => formik.setFieldValue("username", e.target.value)}
-              value={formik.values.username}
-            />
-            <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={formik.errors.password}>
-            <Input
-              placeholder="Password"
-              onChange={(e) => formik.setFieldValue("password", e.target.value)}
-              value={formik.values.password}
-            />
-            <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
-          </FormControl>
-          <FormControl>
-            <Input
-              placeholder="Email"
-              onChange={(e) => formik.setFieldValue("email", e.target.value)}
-              value={formik.values.email}
-            />
-            <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
-          </FormControl>
-          <FormControl>
-            <Input
-              placeholder="First Name"
-              onChange={(e) =>
-                formik.setFieldValue("firstName", e.target.value)
-              }
-              value={formik.values.firstName}
-            />
-            <FormErrorMessage>{formik.errors.firstName}</FormErrorMessage>
-          </FormControl>
-          <FormControl>
-            <Input
-              placeholder="Last Name"
-              onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
-              value={formik.values.lastName}
-            />
-            <FormErrorMessage>{formik.errors.lastName}</FormErrorMessage>
-          </FormControl>
-          <FormControl>
-            <Button
-              type="submit"
-              colorScheme="red"
-              disabled={formik.isSubmitting}
-            >
-              Submit
-            </Button>
-          </FormControl>
+          <Formik
+            initialValues={{
+              username: "",
+              password: "",
+              email: "",
+              firstName: "",
+              lastName: "",
+            }}
+            validationSchema={cashierSchema}
+            onSubmit={handleCashier}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <Stack spacing="5" mb="2">
+                  <Field name="username">
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.username && form.touched.username
+                        }
+                        isDisabled={isSubmitting}
+                      >
+                        <FormLabel>Username</FormLabel>
+                        <Input type="text" placeholder="Username" {...field} />
+                        <FormErrorMessage>
+                          {form.errors.username}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="password">
+                    {({ field, form }) => (
+                      <PasswordField
+                        field={field}
+                        form={form}
+                        isSubmitting={isSubmitting}
+                      />
+                    )}
+                  </Field>
+                  <Field name="email">
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={form.errors.email && form.touched.email}
+                        isDisabled={isSubmitting}
+                      >
+                        <FormLabel>email</FormLabel>
+                        <Input type="text" placeholder="Email" {...field} />
+                        <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="firstName">
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.firstName && form.touched.firstName
+                        }
+                        isDisabled={isSubmitting}
+                      >
+                        <FormLabel>firstName</FormLabel>
+                        <Input
+                          type="text"
+                          placeholder="First Name"
+                          {...field}
+                        />
+                        <FormErrorMessage>
+                          {form.errors.firstName}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="lastName">
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.lastName && form.touched.lastName
+                        }
+                        isDisabled={isSubmitting}
+                      >
+                        <FormLabel>lastName</FormLabel>
+                        <Input type="text" placeholder="Last Name" {...field} />
+                        <FormErrorMessage>
+                          {form.errors.lastName}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                </Stack>
+                <Stack spacing="6">
+                  <Button loadingText="Loading" type="submit" colorScheme="red">
+                    Register
+                  </Button>
+                </Stack>
+              </Form>
+            )}
+          </Formik>
         </Stack>
       </Container>
     </SidebarWithHeader>
   );
-};
+}
 export default AddCashierPage;
