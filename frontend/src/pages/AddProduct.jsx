@@ -22,7 +22,7 @@ import SidebarWithHeader from "../components/sidebar";
 const AddProductPage = () => {
   const toast = useToast();
 
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [setUploadedFiles] = useState([]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
