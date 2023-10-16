@@ -114,6 +114,9 @@ export default function UserProfileEdit() {
           status: "success",
           duration: 1000,
           isClosable: true,
+          onCloseComplete() {
+            navigate("/");
+          },
         });
       } else {
         toast({
@@ -174,8 +177,10 @@ export default function UserProfileEdit() {
       firstName: profile.firstName,
       lastName: profile.lastName,
     },
-    editSchema,
-    handleUpdate,
+    validationSchema: editSchema,
+    onSubmit: (values) => {
+      handleUpdate(values);
+    },
   });
 
   return (
@@ -220,7 +225,7 @@ export default function UserProfileEdit() {
               </Center>
             </Stack>
           </FormControl>
-          <FormControl id="username" >
+          <FormControl id="username">
             <FormLabel>User Name</FormLabel>
             <Input
               placeholder="UserName"
@@ -231,7 +236,7 @@ export default function UserProfileEdit() {
               value={formik.values.username}
             />
           </FormControl>
-          <FormControl id="password" >
+          <FormControl id="password">
             <FormLabel>Password</FormLabel>
             <InputGroup>
               <Input
@@ -254,7 +259,7 @@ export default function UserProfileEdit() {
               </InputRightElement>
             </InputGroup>
           </FormControl>
-          <FormControl id="ConfirmPassword" >
+          <FormControl id="ConfirmPassword">
             <FormLabel>Confirm Password</FormLabel>
             <InputGroup>
               <Input
@@ -277,7 +282,7 @@ export default function UserProfileEdit() {
               </InputRightElement>
             </InputGroup>
           </FormControl>
-          <FormControl id="email" >
+          <FormControl id="email">
             <FormLabel>Email address</FormLabel>
             <Input
               placeholder="your-email@example.com"
@@ -288,7 +293,7 @@ export default function UserProfileEdit() {
               value={formik.values.email}
             />
           </FormControl>
-          <FormControl id="firstName" >
+          <FormControl id="firstName">
             <FormLabel>First Name</FormLabel>
             <Input
               placeholder="First Name"
@@ -299,7 +304,7 @@ export default function UserProfileEdit() {
               value={formik.values.firstName}
             />
           </FormControl>
-          <FormControl id="lastName" >
+          <FormControl id="lastName">
             <FormLabel>Last Name</FormLabel>
             <Input
               placeholder="Last Name"
@@ -317,7 +322,8 @@ export default function UserProfileEdit() {
               w="full"
               _hover={{
                 bg: "blue.500",
-              }} onClick={handleUpdate}>
+              }}
+              onClick={handleUpdate}>
               Submit
             </Button>
             <Button
