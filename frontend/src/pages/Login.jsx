@@ -24,8 +24,7 @@ import * as yup from "yup";
 import { login } from "../slices/userSlice";
 import { Field, Form, Formik } from "formik";
 import { FaUserAlt } from "react-icons/fa";
-// import { OAuthButtonGroup } from "./Login/OAuthButtonGroup";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CFaUserAlt = chakra(FaUserAlt);
 
@@ -94,24 +93,8 @@ function Login() {
           base: "0",
           sm: "8",
         }}>
-        <Stack spacing="8">
-          <Stack spacing="6" alignItems="center">
-            <Image src={Logo} boxSize="300px" />
-            <Stack
-              spacing={{
-                base: "2",
-                md: "3",
-              }}
-              textAlign="center">
-              <Heading
-                size={{
-                  base: "xs",
-                  md: "sm",
-                }}>
-                Log in to your account
-              </Heading>
-            </Stack>
-          </Stack>
+        <Stack>
+          <Image alignSelf="center" src={Logo} boxSize="300px" />
           <Box
             py={{
               base: "0",
@@ -132,8 +115,17 @@ function Login() {
             borderRadius={{
               base: "none",
               sm: "xl",
-            }}>
+            }}
+            my={1}>
             <Stack spacing="6">
+              <Heading
+                alignSelf="center"
+                size={{
+                  base: "sm",
+                  md: "md",
+                }}>
+                Log in to your account
+              </Heading>
               <Formik
                 initialValues={{ username: "", password: "" }}
                 validationSchema={loginSchema}
@@ -154,7 +146,11 @@ function Login() {
                                 pointerEvents="none"
                                 children={<CFaUserAlt color="gray.300" />}
                               />
-                              <Input type="text" placeholder="Username" {...field} />
+                              <Input
+                                type="text"
+                                placeholder="Username"
+                                {...field}
+                              />
                             </InputGroup>
                             <FormErrorMessage>
                               {form.errors.username}
@@ -176,9 +172,11 @@ function Login() {
                       <Checkbox defaultChecked colorScheme="red">
                         Remember me
                       </Checkbox>
-                      <Button variant="text" size="sm">
-                        Forgot password?
-                      </Button>
+                      <Link to="/forgot-password/">
+                        <Button variant="text" size="sm">
+                          Forgot password?
+                        </Button>
+                      </Link>
                     </HStack>
                     <Stack spacing="6">
                       <Button
