@@ -1,13 +1,11 @@
 import {
   Box,
   Button,
-  Checkbox,
   Container,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
-  HStack,
   Image,
   Input,
   InputGroup,
@@ -15,23 +13,29 @@ import {
   Stack,
   useToast,
   chakra,
+  InputRightElement,
+  IconButton,
 } from "@chakra-ui/react";
 import Logo from "../images/Kiefcie-removebg.png";
-import { PasswordField } from "../components/PasswordField";
+import { PasswordField } from "../components/ResetConfirmPassField";
 import api from "../api";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import { login } from "../slices/userSlice";
 import { Field, Form, Formik } from "formik";
 import { FaUserAlt } from "react-icons/fa";
+import { FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 
-const CFaUserAlt = chakra(FaUserAlt);
+const CFaLock = chakra(FaLock);
 
-function Login() {
+function ResetPass() {
   const toast = useToast();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
   //connect db.json when registered user submit on login modal
   const handleLogin = (values, forms) => {
@@ -71,9 +75,12 @@ function Login() {
       });
   };
 
-  const loginSchema = yup.object().shape({
-    username: yup.string().required("Username cant be empty"),
-    password: yup.string().required("Password cant be empty"),
+  const resetSchema = yup.object().shape({
+    newPassword: yup.string().required("Password cant be empty"),
+    newConfirmpassword: yup
+      .string()
+      .required("Password cant be empty")
+      .oneOf([yup.ref("newPassword")], "Password doesn't match"),
   });
   return (
     <div
@@ -124,41 +131,55 @@ function Login() {
                   base: "sm",
                   md: "md",
                 }}>
-                Log in to your account
+                Input Your New Password
               </Heading>
               <Formik
-                initialValues={{ username: "", password: "" }}
-                validationSchema={loginSchema}
+                initialValues={{ newPassword: "", newConfirmpassword: "" }}
+                validationSchema={resetSchema}
                 onSubmit={handleLogin}>
                 {({ isSubmitting }) => (
                   <Form>
                     <Stack spacing="5" mb="2">
-                      <Field name="username">
+                      <Field name="newPassword">
                         {({ field, form }) => (
                           <FormControl
                             isInvalid={
-                              form.errors.username && form.touched.username
+                              form.errors.newPassword &&
+                              form.touched.newPassword
                             }
                             isDisabled={isSubmitting}>
-                            <FormLabel>Username</FormLabel>
+                            <FormLabel>New Password</FormLabel>
                             <InputGroup>
                               <InputLeftElement
                                 pointerEvents="none"
-                                children={<CFaUserAlt color="gray.300" />}
+                                children={<CFaLock color="gray.300" />}
                               />
                               <Input
-                                type="text"
-                                placeholder="Username"
+                                type={isOpen ? "text" : "password"}
+                                placeholder="New Password"
+                                required
                                 {...field}
                               />
+                              <InputRightElement>
+                                <IconButton
+                                  variant="ghost"
+                                  aria-label={
+                                    isOpen ? "Mask password" : "Reveal password"
+                                  }
+                                  icon={isOpen ? <HiEyeOff /> : <HiEye />}
+                                  onClick={() => {
+                                    setIsOpen((open) => !open);
+                                  }}
+                                />
+                              </InputRightElement>
                             </InputGroup>
                             <FormErrorMessage>
-                              {form.errors.username}
+                              {form.errors.newPassword}
                             </FormErrorMessage>
                           </FormControl>
                         )}
                       </Field>
-                      <Field name="password">
+                      <Field name="newConfirmpassword">
                         {({ field, form }) => (
                           <PasswordField
                             field={field}
@@ -168,23 +189,13 @@ function Login() {
                         )}
                       </Field>
                     </Stack>
-                    <HStack justify="space-between" mb="2">
-                      <Checkbox defaultChecked colorScheme="red">
-                        Remember me
-                      </Checkbox>
-                      <Link to="/forgot-password/">
-                        <Button variant="text" size="sm">
-                          Forgot password?
-                        </Button>
-                      </Link>
-                    </HStack>
                     <Stack spacing="6">
                       <Button
                         loadingText="Signing In"
                         type="submit"
                         colorScheme="red"
                         isLoading={isSubmitting}>
-                        Sign in
+                        Reset Password
                       </Button>
                     </Stack>
                   </Form>
@@ -198,4 +209,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ResetPass;

@@ -167,7 +167,7 @@ export default function UserProfileEdit() {
     confirmpassword: yup
       .string()
       .optional()
-      .oneOf([yup.ref("password"), ""], "Password don't match"),
+      .oneOf([yup.ref("password"), ""], "Password doesn't match"),
     email: yup.string(),
     firstName: yup.string(),
     lastName: yup.string(),
