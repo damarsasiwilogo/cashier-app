@@ -11,6 +11,7 @@ import { ShowProduct } from "./pages/ShowProduct";
 import AddCashierPage from "./pages/AddCashier";
 import Profile from "./pages/Profile";
 import CashierProfile from "./pages/CashierProfile"
+import ResetPassword from "./pages/ResetPass"
 // import api from "./api";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/show-product/" element={<ShowProduct />} />
         <Route path="/profile/" element={<Profile />} />
         <Route path="/cashier-profile/" element={<CashierProfile />} />
+        <Route path="/reset-password/" element={<ResetPassword />} />
       </Routes>
     </>
   );
