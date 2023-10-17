@@ -9,7 +9,8 @@ import Login from "./pages/Login";
 import { HomePage } from "./pages/HomePage";
 import { ShowProduct } from "./pages/ShowProduct";
 import AddCashierPage from "./pages/AddCashier";
-import Profile from "./pages/Profile"
+import Profile from "./pages/Profile";
+import CashierProfile from "./pages/CashierProfile"
 // import api from "./api";
 
 function App() {
@@ -21,7 +22,8 @@ function App() {
         <Route path="/add-product/" element={<AddProductPage />} />
         <Route path="/add-cashier/" element={<AddCashierPage />} />
         <Route path="/show-product/" element={<ShowProduct />} />
-        <Route path="/profile/" element={<Profile/>}/>
+        <Route path="/profile/" element={<Profile />} />
+        <Route path="/cashier-profile/" element={<CashierProfile />} />
       </Routes>
     </>
   );
