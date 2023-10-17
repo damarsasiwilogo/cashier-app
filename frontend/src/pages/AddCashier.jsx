@@ -18,7 +18,6 @@ import api from "../api";
 function AddCashierPage() {
   const toast = useToast();
 
-  //connect db.json when registered user submit on login modal
   const handleCashier = (values, forms) => {
     console.log("test");
 
