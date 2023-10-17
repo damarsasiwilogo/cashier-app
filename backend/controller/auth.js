@@ -15,7 +15,6 @@ exports.handleLogin = async (req, res) => {
         [Op.or]: {
           username: identity,
           email: identity,
-          password,
         },
       },
     });

@@ -351,11 +351,11 @@ export default function UserProfileEdit() {
             </FormControl>
             <Flex mt="5" spacing={6} direction={["column", "row"]}>
               <Button
-                bg={"blue.400"}
+                bg={"red.400"}
                 color={"white"}
                 w="full"
                 _hover={{
-                  bg: "blue.500",
+                  bg: "red.500",
                 }}
                 type="submit">
                 Submit
