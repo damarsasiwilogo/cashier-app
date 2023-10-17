@@ -56,7 +56,7 @@ export const HomePage = () => {
         <Flex direction="column" h="100%" justifyContent="space-between">
           <Box>
             {user && <Heading mb={4} color="white">Welcome, {user.firstName} {user.lastName}!</Heading>}
-            <Text fontSize="xl" color="white">We're glad to have you here. Explore our features and get started!</Text>
+            <Text fontSize="xl" color="white">We're glad to have you here. Have a good time!</Text>
           </Box>
 
           {/* Button linking to /show-product for cashier */}
