@@ -14,6 +14,7 @@ export const ShowProduct = () => {
   const [showModal, setShowModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showCartModal, setShowCartModal] = useState(false); // <-- New state for cart modal
+  const [isReceiptSidebarOpen, setIsReceiptSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -98,8 +99,12 @@ export const ShowProduct = () => {
         )}
         {user && user.userRole === 'cashier' && (
           <CartModal 
-            isOpen={showCartModal} 
+            isOpen={showCartModal}
             onClose={() => setShowCartModal(false)}
+            onCheckout={() => {
+              setIsReceiptSidebarOpen(true);
+              setShowCartModal(false);
+            }}
           />
         )}
       </Box>

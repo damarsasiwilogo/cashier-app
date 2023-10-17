@@ -11,6 +11,7 @@ import { ShowProduct } from "./pages/ShowProduct";
 import AddCashierPage from "./pages/AddCashier";
 import Profile from "./pages/Profile";
 import CashierProfile from "./pages/CashierProfile"
+import { CartPage } from "./pages/CartPage";
 // import api from "./api";
 
 function App() {
@@ -28,6 +29,8 @@ function App() {
         <Route path="/show-product/" element={<ShowProduct />} />
         <Route path="/profile/" element={<Profile />} />
         <Route path="/cashier-profile/" element={<CashierProfile />} />
+        <Route path="/cart/" element={<CartPage />} />
+        <Route path="*" element={<h1>Not Found</h1>} />
       </Routes>
     </>
   );

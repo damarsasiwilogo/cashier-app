@@ -19,9 +19,11 @@ import {
   NumberDecrementStepper,
 } from "@chakra-ui/react";
 import api from '../api'; // Adjust this import path based on your file structure
+import ReceiptSidebar from './ReceiptSidebar';
 
 function CartModal({ isOpen, onClose }) {
     const [cartItems, setCartItems] = useState([]);
+    const [isReceiptOpen, setIsReceiptOpen] = useState(false);
   
     useEffect(() => {
       if (isOpen) {
@@ -63,6 +65,10 @@ function CartModal({ isOpen, onClose }) {
   
   const totalPrice = cartItems.reduce((sum, item) => sum + (item.Product.price * item.quantity), 0);
 
+  const handleCheckout = () => {
+    setIsReceiptOpen(true);
+  };
+    
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -98,9 +104,15 @@ function CartModal({ isOpen, onClose }) {
         </ModalBody>
         <ModalFooter>
           <Text mr={4}>Total: ${totalPrice}</Text>
-          <Button colorScheme="blue">Checkout</Button>
+          <Button colorScheme="blue" onClick={handleCheckout}>Checkout</Button>
         </ModalFooter>
       </ModalContent>
+      <ReceiptSidebar
+        isOpenReceipt={isReceiptOpen}
+        onCloseReceipt={() => setIsReceiptOpen(false)}
+        cartItems={cartItems}
+        total={totalPrice}
+      />
     </Modal>
   );
 }
