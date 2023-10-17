@@ -9,7 +9,7 @@ import {
   useToast,
   FormLabel,
 } from "@chakra-ui/react";
-import { PasswordField } from "./Login/PasswordField";
+import { PasswordField } from "../components/PasswordField";
 import SidebarWithHeader from "../components/sidebar";
 import { Formik, Form, Field } from "formik";
 import * as yup from "yup";

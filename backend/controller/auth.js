@@ -2,8 +2,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 const fs = require("fs");
+const hbs = require("handlebars");
 const { Account } = require("../models");
-
+const crypto = require("crypto");
 const JWT_SECRET_KEY = "ini_jwt_loh";
 
 exports.handleLogin = async (req, res) => {
@@ -69,8 +70,7 @@ exports.handleLogin = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   const accountId = req.user.id;
-  const { username, password, email, firstName, lastName } =
-    req.body;
+  const { username, password, email, firstName, lastName } = req.body;
 
   try {
     const account = await Account.findByPk(accountId);
@@ -126,33 +126,6 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// exports.handleUploadPhoto = async (req, res) => {
-//   const { filename } = req.file;
-//   const { id: accountId } = req.user;
-
-//   try {
-//     const profile = await Account.findOne({
-//       where: { id: accountId },
-//     });
-
-//     if (profile.photoProfile) {
-//       fs.rmSync(__dirname + "/../public/" + profile.photoProfile);
-//     }
-//     profile.photoProfile = filename;
-//     await profile.save();
-
-//     res.json({
-//       ok: true,
-//       message: "Your profile photo updated Broo!!",
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       ok: false,
-//       message: String(err),
-//     });
-//   }
-// };
-
 exports.getAccountProfile = async (req, res) => {
   const { id: accountId } = req.user;
 
@@ -185,6 +158,57 @@ exports.getAccountProfile = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({
+      ok: false,
+      message: String(err),
+    });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const token = crypto.randomBytes(20).toString("hex");
+    const user = await Account.findOne({
+      where: { email: req.body.email },
+    });
+    if (!user) {
+      res.status(400).json({
+        ok: false,
+        message: "Account doesn't exist Broo!!",
+      });
+    }
+
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+    const tokenExpiry = new Date();
+    tokenExpiry.setTime(tokenExpiry.getTime() + 3600000);
+
+    const result = await Account.update(
+      {
+        resetPasswordToken: tokenHash,
+        resetPasswordExpires: tokenExpiry,
+      },
+      {
+        where: { email: req.body.email },
+      }
+    );
+
+    const resetLink = `${req.protocol}://localhost:3000/reset-password/${token}`;
+    const templateRaw = fs.readFileSync(
+      __dirname + "/../email-html/email.html",
+      "utf8"
+    );
+
+    const templateCompile = hbs.compile(templateRaw);
+    const emailHTML = templateCompile({
+      firstName: result.firstName,
+    });
+
+    res.status(200).json({
+      ok: true,
+      message: "Password reset email sent Broo!!",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
       ok: false,
       message: String(err),
     });

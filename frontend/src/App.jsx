@@ -10,7 +10,9 @@ import { HomePage } from "./pages/HomePage";
 import { ShowProduct } from "./pages/ShowProduct";
 import AddCashierPage from "./pages/AddCashier";
 import Profile from "./pages/Profile";
-import CashierProfile from "./pages/CashierProfile"
+import CashierProfile from "./pages/CashierProfile";
+import ForgotPassword from "./pages/ForgotPass";
+import ResetPassword from "./pages/ResetPass";
 import { CartPage } from "./pages/CartPage";
 // import api from "./api";
 
@@ -31,6 +33,8 @@ function App() {
         <Route path="/cashier-profile/" element={<CashierProfile />} />
         <Route path="/cart/" element={<CartPage />} />
         <Route path="*" element={<h1>Not Found</h1>} />
+        <Route path="/forgot-password/" element={<ForgotPassword />} />
+        <Route path="/reset-password/" element={<ResetPassword />} />
       </Routes>
     </>
   );
