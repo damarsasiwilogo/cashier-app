@@ -342,17 +342,25 @@ exports.sortProducts = (req, res, next) => {
 
   // Validate and parse query parameters for filtering
   const queryParams = { name: qname, category: qcat };
+  const likeParams = {};
+
   for (const [key, value] of Object.entries(queryParams)) {
-    if (value && typeof value !== "string") {
-      return res.status(400).json({
-        status: "error",
-        message: `Invalid ${key} parameter. Must be a string.`,
-      });
+
+    if (value) {
+      if (typeof value !== 'string') {
+        return res.status(400).json({
+          status: 'error',
+          message: `Invalid ${key} parameter. Must be a string.`,
+        });
+      } else {
+        // Create an Op.like pattern for the filtering
+        likeParams[key] = { [Op.like]: `${value}%` };
+      }
     }
   }
 
   // Attach filtering parameters to request object
-  req.filtering = queryParams;
+  req.filtering = likeParams;
 
   // Move to next middleware or route handler
   next();

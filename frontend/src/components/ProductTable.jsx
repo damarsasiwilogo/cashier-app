@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -21,6 +22,7 @@ import ProductDetailModal from "./ProductDetailModal";
 import api from "../api"; // Ensure the path is correct
 import MyComponent from "./UpdateProduct";
 
+
 function ProductTable() {
   const [user, setUser] = useState(null); // Added state to manage user
   const [products, setProducts] = useState([]);
@@ -35,6 +37,7 @@ function ProductTable() {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const baseURL = "localhost:8000";
+
   const handleProductClick = (productId) => {
     setSelectedProductId(productId);
     setIsModalOpen(true);
@@ -74,6 +77,7 @@ function ProductTable() {
     fetchUserData();
   }, []);
 
+  
   useEffect(() => {
     // Fetch products from API
     const token = localStorage.getItem("token"); // Retrieve token from local storage
@@ -107,6 +111,9 @@ function ProductTable() {
 
   return (
     <div>
+      <Flex justifyContent="space-between" alignItems="center" mb={4}>
+        <SearchBar onSearch={handleSearch} />
+      </Flex>
       <Table variant="simple">
         <Thead>
           <Tr>
