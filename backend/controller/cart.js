@@ -40,3 +40,46 @@ exports.listItems = async (req, res) => {
     res.status(500).send({ message: 'Internal server error' });
   }
 };
+
+// Delete a specific cart item
+exports.deleteCartItem = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const cartItem = await Cart.findByPk(id);
+      if (!cartItem) {
+        return res.status(404).send({ message: 'Cart item not found' });
+      }
+  
+      await cartItem.destroy();
+      res.status(200).send({ message: 'Cart item deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting cart item:', error);
+      res.status(500).send({ message: 'Internal server error' });
+    }
+  };
+
+  exports.updateCartItem = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { quantity } = req.body;
+  
+      const cartItem = await Cart.findByPk(id);
+      if (!cartItem) {
+        return res.status(404).send({ message: 'Cart item not found' });
+      }
+  
+      cartItem.quantity = quantity;
+      await cartItem.save();
+  
+      // Fetch the updated cart item with associated product data
+      const updatedCartItem = await Cart.findByPk(id, {
+        include: [{ model: Product }]
+      });
+  
+      res.status(200).send(updatedCartItem);
+    } catch (error) {
+      console.error('Error updating cart item:', error);
+      res.status(500).send({ message: 'Internal server error' });
+    }
+  };
+  

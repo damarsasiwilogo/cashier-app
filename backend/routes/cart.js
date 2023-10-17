@@ -18,4 +18,16 @@ router.get(
     authMiddleware.checkUser,
     cartController.listItems);
 
+router.delete(
+    '/:id', 
+    authMiddleware.validateToken,
+    authMiddleware.checkUser,
+    cartController.deleteCartItem);
+
+router.patch(
+    '/:id', 
+    authMiddleware.validateToken,
+    authMiddleware.checkUser,
+    cartController.updateCartItem);
+
 module.exports = router;
