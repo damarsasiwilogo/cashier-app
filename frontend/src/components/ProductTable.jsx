@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -11,6 +10,7 @@ import {
   Button,
   Image,
   useDisclosure,
+  Flex,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -21,7 +21,6 @@ import {
 import ProductDetailModal from "./ProductDetailModal";
 import api from "../api"; // Ensure the path is correct
 import MyComponent from "./UpdateProduct";
-
 
 function ProductTable() {
   const [user, setUser] = useState(null); // Added state to manage user
@@ -77,7 +76,6 @@ function ProductTable() {
     fetchUserData();
   }, []);
 
-  
   useEffect(() => {
     // Fetch products from API
     const token = localStorage.getItem("token"); // Retrieve token from local storage

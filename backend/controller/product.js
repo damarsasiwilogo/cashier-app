@@ -4,7 +4,7 @@ const { Product, Category } = require("../models");
 
 exports.handleCreateProduct = async (req, res, file) => {
   const { name, price, category, description, isActive } = req.body;
-  const filename = req.file;
+  const { filename } = req.file;
 
   try {
     const product = await Product.create({
@@ -345,11 +345,10 @@ exports.sortProducts = (req, res, next) => {
   const likeParams = {};
 
   for (const [key, value] of Object.entries(queryParams)) {
-
     if (value) {
-      if (typeof value !== 'string') {
+      if (typeof value !== "string") {
         return res.status(400).json({
-          status: 'error',
+          status: "error",
           message: `Invalid ${key} parameter. Must be a string.`,
         });
       } else {
