@@ -17,7 +17,7 @@ import {
   chakra,
 } from "@chakra-ui/react";
 import Logo from "../images/Kiefcie-removebg.png";
-import { PasswordField } from "./Login/PasswordField";
+import { PasswordField } from "../components/PasswordField";
 import api from "../api";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
