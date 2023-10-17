@@ -25,7 +25,7 @@ import { login } from "../slices/userSlice";
 import { Field, Form, Formik } from "formik";
 import { FaUserAlt } from "react-icons/fa";
 // import { OAuthButtonGroup } from "./Login/OAuthButtonGroup";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CFaUserAlt = chakra(FaUserAlt);
 
@@ -176,9 +176,11 @@ function Login() {
                       <Checkbox defaultChecked colorScheme="red">
                         Remember me
                       </Checkbox>
-                      <Button variant="text" size="sm">
-                        Forgot password?
-                      </Button>
+                      <Link to="/forgot-password/">
+                        <Button variant="text" size="sm">
+                          Forgot password?
+                        </Button>
+                      </Link>
                     </HStack>
                     <Stack spacing="6">
                       <Button
