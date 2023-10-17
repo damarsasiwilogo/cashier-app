@@ -266,7 +266,12 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
                 <MenuList bg={backGround} borderColor={backGround}>
                   <MenuItem
                     onClick={() => {
-                      navigate("/profile");
+                      {user && user.userRole &&
+                        navigate(
+                          user.userRole === "admin"
+                            ? "/profile"
+                            : "/cashier-profile"
+                        );}
                     }}>
                     Edit Profile
                   </MenuItem>
