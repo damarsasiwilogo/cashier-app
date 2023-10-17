@@ -147,6 +147,10 @@ function ProductTable() {
     });
   };
 
+  const formatToIDR = (amount) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
+  };
+
   return (
     <div>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
@@ -184,7 +188,7 @@ function ProductTable() {
                 />
               </Td>
               <Td>{product.name}</Td>
-              <Td>{product.price}</Td>
+              <Td>{formatToIDR(product?.price)}</Td>
               <Td>{product.description}</Td>
               {user && user.userRole === "admin" && (
                 <Td>
