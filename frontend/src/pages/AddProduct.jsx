@@ -4,8 +4,6 @@ import {
   Input,
   Stack,
   Text,
-  Switch,
-  FormLabel,
   Select,
   Button,
   Box,
@@ -24,7 +22,12 @@ const AddProductPage = () => {
   const toast = useToast();
   const [categories, setCategories] = useState([]);
 
-  const [setUploadedFiles] = useState([]);
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      console.log(acceptedFiles);
+      formik.setFieldValue("image", acceptedFiles[0]);
+    },
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -33,7 +36,6 @@ const AddProductPage = () => {
       category: "",
       description: "",
       image: null,
-      isActive: "",
     },
     validationSchema: Yup.object().shape({
       name: Yup.string().required("please input the Product Name"),
@@ -47,9 +49,9 @@ const AddProductPage = () => {
     validateOnChange: false,
     onSubmit: async (value, forms) => {
       const formData = new FormData();
-      formData.append("nama", value.name);
+      formData.append("name", value.name);
       formData.append("price", value.price);
-      formData.append("category", value.category);
+      formData.append("categoryId", value.category);
       formData.append("description", value.description);
       formData.append("image", value.image);
 
@@ -61,6 +63,12 @@ const AddProductPage = () => {
         });
 
         formik.setSubmitting(false);
+        toast({
+          status: "success",
+          title: "Create Product Success",
+          isClosable: true,
+          duration: 3000,
+        });
       } catch (err) {
         formik.setSubmitting(false);
         console.log(err);
@@ -74,14 +82,6 @@ const AddProductPage = () => {
         });
       }
       forms.resetForm();
-    },
-  });
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: (acceptedFiles) => {
-      // Menggunakan useState untuk memperbarui state uploadedFiles
-      setUploadedFiles(acceptedFiles);
-      formik.setFieldValue("image", acceptedFiles[0]);
     },
   });
 
@@ -156,7 +156,7 @@ const AddProductPage = () => {
                 }
                 value={formik.values.description}
               />
-              <FormErrorMessage>{formik.errors.description}</FormErrorMessage>
+              <FormErrorMessage>{formik.errors.category}</FormErrorMessage>
             </FormControl>
             <FormControl
               isInvalid={formik.errors.image}
@@ -176,16 +176,19 @@ const AddProductPage = () => {
                   }}
                 >
                   <input {...getInputProps()} />
-                  <p>Drag 'n' drop some files here, or click to select files</p>
+                  {formik.values.image !== null ? (
+                    <img
+                      alt="not-found"
+                      src={URL.createObjectURL(formik.values.image)}
+                    />
+                  ) : (
+                    <p>
+                      Drag 'n' drop some files here, or click to select files
+                    </p>
+                  )}
                 </div>
               </Box>
               <FormErrorMessage>{formik.errors.image}</FormErrorMessage>
-              <Box display="flex">
-                <FormLabel htmlFor="active" mb="0">
-                  Active
-                </FormLabel>
-                <Switch id="active" />
-              </Box>
             </FormControl>
             <FormControl>
               <Button
