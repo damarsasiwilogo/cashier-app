@@ -161,7 +161,7 @@ export default function UserProfileEdit() {
   };
 
   const editSchema = yup.object().shape({
-    username: yup.string(),
+    username: yup.string().required("Required"),
     password: yup
       .string()
       .optional()
@@ -185,7 +185,7 @@ export default function UserProfileEdit() {
       username: "",
       lastName: "",
       firstName: "",
-      email: ""
+      email: "",
     },
     editSchema,
     onSubmit: handleUpdate,

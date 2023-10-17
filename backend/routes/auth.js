@@ -13,6 +13,13 @@ router.patch(
   multerUpload.single("file"),
   authController.updateProfile
 );
+router.patch(
+  "/account/cashier",
+  authMiddleware.validateToken,
+  authMiddleware.checkUser,
+  multerUpload.single("file"),
+  authController.updateProfile
+);
 router.get(
   "/account/profile/:id",
   authMiddleware.validateToken,
