@@ -29,14 +29,10 @@ YupPassword(yup);
 
 export default function UserProfileEdit() {
   const baseURL = "localhost:8000";
-
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
-
-  // const [selectedFileName, setSelectedFileName] = useState();
-
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
 
@@ -105,7 +101,7 @@ export default function UserProfileEdit() {
       data.append("email", values.email);
       data.append("firstName", values.firstName);
       data.append("lastName", values.lastName);
-      if (values.photoProfile) data.append("photoProfile", values.photoProfile);
+      if (values.photoProfile) data.append("file", values.photoProfile);
       if (values.password) {
         data.append("password", values.password);
       }
@@ -117,7 +113,6 @@ export default function UserProfileEdit() {
       });
 
       if (response.data.ok) {
-        // setSelectedFileName("");
         passwordRef.current.value = "";
         confirmPasswordRef.current.value = "";
         toast({
@@ -178,14 +173,13 @@ export default function UserProfileEdit() {
     lastName: yup.string(),
   });
 
-  const profile = JSON.parse(localStorage.getItem("profile"));
-
   const formik = useFormik({
     initialValues: {
       username: "",
       lastName: "",
       firstName: "",
       email: "",
+      photoProfile: null,
     },
     editSchema,
     onSubmit: handleUpdate,
@@ -207,7 +201,7 @@ export default function UserProfileEdit() {
             Edit Profile
           </Heading>
           <form onSubmit={formik.handleSubmit}>
-            <FormControl id="username">
+            <FormControl id="photoProfile">
               <FormLabel>User Icon</FormLabel>
               <Stack direction={["column", "row"]} spacing={6}>
                 <Center>
@@ -218,7 +212,7 @@ export default function UserProfileEdit() {
                         ? `http://${baseURL}/static/${userData.photoProfile}`
                         : "https://www.adebayosegun.com/_next/image?url=%2Fstatic%2Fimages%2Fsegun-adebayo-headshot.jpg&w=3840&q=75"
                     }>
-                    <AvatarBadge
+                    {/* <AvatarBadge
                       as={IconButton}
                       size="sm"
                       rounded="full"
@@ -226,11 +220,26 @@ export default function UserProfileEdit() {
                       colorScheme="red"
                       aria-label="remove Image"
                       icon={<SmallCloseIcon />}
-                    />
+                    /> */}
                   </Avatar>
                 </Center>
                 <Center w="full">
-                  <Button w="full">Change Profile Picture</Button>
+                  <label htmlFor="inputImage">
+                    <Button w="full" as="span">
+                      Change Profile Picture
+                    </Button>
+                  </label>
+                  <input
+                    type="file"
+                    style={{ display: "none" }}
+                    id="inputImage"
+                    name="inputImage"
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        formik.setFieldValue("photoProfile", e.target.files[0]);
+                      }
+                    }}
+                  />
                 </Center>
               </Stack>
             </FormControl>
@@ -350,15 +359,6 @@ export default function UserProfileEdit() {
                 }}
                 type="submit">
                 Submit
-              </Button>
-              <Button
-                bg={"red.400"}
-                color={"white"}
-                w="full"
-                _hover={{
-                  bg: "red.500",
-                }}>
-                Cancel
               </Button>
             </Flex>
           </form>
