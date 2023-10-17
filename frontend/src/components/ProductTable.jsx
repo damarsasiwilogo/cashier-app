@@ -21,6 +21,7 @@ import {
 import ProductDetailModal from "./ProductDetailModal";
 import api from "../api"; // Ensure the path is correct
 import MyComponent from "./UpdateProduct";
+import { SearchBar } from './SearchBar';
 
 function ProductTable() {
   const [user, setUser] = useState(null); // Added state to manage user
@@ -31,7 +32,7 @@ function ProductTable() {
     key: "name",
     direction: "asc",
   });
-
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -75,6 +76,31 @@ function ProductTable() {
 
     fetchUserData();
   }, []);
+  const fetchProducts = (query = '') => {
+    const token = localStorage.getItem('token');  // Retrieve token from local storage
+    api.get(`/product/${currentPage}`, {
+      headers: {
+        Authorization: `Bearer ${token}` // Use token from local storage
+      },
+      params: {
+        sortBy: sortConfig.key,
+        order: sortConfig.direction,
+        qname: query
+      }
+    })
+    .then(response => {
+      setProducts(response.data.data.products);
+      setTotalPages(response.data.data.pagination.totalPages); // Update total pages
+    })
+    .catch(error => {
+      console.error("Error fetching products:", error);
+    });
+  }
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    fetchProducts(query);
+  };
 
   useEffect(() => {
     // Fetch products from API
