@@ -47,3 +47,16 @@ exports.checkUserRole = (req, res, next) => {
   }
   next();
 };
+
+
+exports.checkUser = (req, res, next) => {
+  if (req.user.userRole === "admin") {
+    res.status(403).json({
+      ok: false,
+      message: "Forbidden Broo!!",
+    });
+    return;
+  }
+  next();
+};
+

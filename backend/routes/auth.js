@@ -7,8 +7,16 @@ const authMiddleware = require("../middleware/auth");
 
 router.post("/", authController.handleLogin);
 router.patch(
-  "/account",
+  "/account/admin",
   authMiddleware.validateToken,
+  authMiddleware.checkUserRole,
+  multerUpload.single("file"),
+  authController.updateProfile
+);
+router.patch(
+  "/account/cashier",
+  authMiddleware.validateToken,
+  authMiddleware.checkUser,
   multerUpload.single("file"),
   authController.updateProfile
 );

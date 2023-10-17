@@ -214,15 +214,15 @@ exports.getCategoryById = async (req, res) => {
 };
 
 exports.getProducts = async (req, res) => {
-  const { page } = req.params;  // Extracting page from route parameters
+  const { page } = req.params; // Extracting page from route parameters
   const limit = 10;
 
   // Validate and parse page
   const pageNumber = parseInt(page, 10);
   if (isNaN(pageNumber) || pageNumber < 1) {
     return res.status(400).json({
-      status: 'error',
-      message: 'Invalid page number.',
+      status: "error",
+      message: "Invalid page number.",
     });
   }
 
@@ -244,10 +244,10 @@ exports.getProducts = async (req, res) => {
     const { count, rows: products } = await Product.findAndCountAll({
       where: whereConditions,
       order: [
-        [req.sorting.sortBy, req.sorting.order]  // Use sorting parameters from middleware
+        [req.sorting.sortBy, req.sorting.order], // Use sorting parameters from middleware
       ],
       limit: limit,
-      offset: (pageNumber - 1) * limit
+      offset: (pageNumber - 1) * limit,
     });
 
     // Calculate total pages
@@ -255,53 +255,56 @@ exports.getProducts = async (req, res) => {
 
     // Send the retrieved products as JSON
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: {
         products,
         pagination: {
           totalItems: count,
           totalPages: totalPages,
           currentPage: pageNumber,
-          itemsPerPage: limit
-        }
+          itemsPerPage: limit,
+        },
       },
     });
-
   } catch (error) {
     // Handle any errors during the database query
     res.status(500).json({
-      status: 'error',
-      message: 'Database query failed.',
+      status: "error",
+      message: "Database query failed.",
       error: error.toString(),
     });
   }
 };
 
 exports.getProductById = async (req, res) => {
-    try {
-        const { productId } = req.params; // Extracting product id from the URL parameter
+  try {
+    const { productId } = req.params; // Extracting product id from the URL parameter
 
-        // Fetching product details by ID
-        const product = await Product.findOne({
-            where: {
-                id: productId
-            },
-            include: [{
-                association: "Category"
-            }] // This will also fetch the associated category of the product
-        });
+    // Fetching product details by ID
+    const product = await Product.findOne({
+      where: {
+        id: productId,
+      },
+      include: [
+        {
+          association: "Category",
+        },
+      ], // This will also fetch the associated category of the product
+    });
 
-        // If no product found
-        if (!product) {
-            return res.status(404).json({ message: "Product not found!" });
-        }
-
-        // Return product details
-        res.status(200).json(product);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "An error occurred while fetching product details." });
+    // If no product found
+    if (!product) {
+      return res.status(404).json({ message: "Product not found!" });
     }
+
+    // Return product details
+    res.status(200).json(product);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching product details." });
+  }
 };
 
 // Middleware to handle sorting & filtering
@@ -311,23 +314,24 @@ exports.sortProducts = (req, res, next) => {
   // Check if both sortBy and order are provided or neither is provided
   if (!!sortBy !== !!order) {
     return res.status(400).json({
-      status: 'error',
-      message: 'Both sortBy and order parameters must be provided.',
+      status: "error",
+      message: "Both sortBy and order parameters must be provided.",
     });
   }
 
   // Validate sortBy and order if they are provided
   if (sortBy && order) {
-    if (!['name', 'category', 'price'].includes(sortBy)) {
+    if (!["name", "category", "price"].includes(sortBy)) {
       return res.status(400).json({
-        status: 'error',
-        message: 'Invalid sortBy parameter. Use "name", "category", or "price".',
+        status: "error",
+        message:
+          'Invalid sortBy parameter. Use "name", "category", or "price".',
       });
     }
 
-    if (!['ASC', 'DESC'].includes(order.toUpperCase())) {
+    if (!["ASC", "DESC"].includes(order.toUpperCase())) {
       return res.status(400).json({
-        status: 'error',
+        status: "error",
         message: 'Invalid order parameter. Use "ASC" or "DESC".',
       });
     }
@@ -335,7 +339,7 @@ exports.sortProducts = (req, res, next) => {
     // Attach sorting parameters to request object
     req.sorting = {
       sortBy,
-      order: order.toUpperCase()
+      order: order.toUpperCase(),
     };
   }
 

@@ -12,7 +12,7 @@ import {
   useToast,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -22,6 +22,7 @@ import api from "../api";
 
 const AddProductPage = () => {
   const toast = useToast();
+  const [categories, setCategories] = useState([]);
 
   const [setUploadedFiles] = useState([]);
 
@@ -86,9 +87,24 @@ const AddProductPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await api.get("/");
-    } catch {}
+      const response = await api.get("/product/category", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const data = response.data;
+        setCategories(data.data.categories);
+      }
+    } catch (error) {
+      console.error("Gak bisa bro:", error);
+    }
   };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <SidebarWithHeader>
@@ -124,7 +140,11 @@ const AddProductPage = () => {
                 }
                 value={formik.values.category}
               >
-                <option value="option1">Option 1</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
                 <FormErrorMessage>{formik.errors.category}</FormErrorMessage>
               </Select>
             </FormControl>

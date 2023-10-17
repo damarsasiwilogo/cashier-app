@@ -14,6 +14,7 @@ import {
   IconButton,
   Center,
   useToast,
+  Text,
 } from "@chakra-ui/react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { SmallCloseIcon } from "@chakra-ui/icons";
@@ -28,12 +29,10 @@ YupPassword(yup);
 
 export default function UserProfileEdit() {
   const baseURL = "localhost:8000";
-  const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
-  // const [selectedFileName, setSelectedFileName] = useState();
-
+  const [userData, setUserData] = useState(null);
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
 
@@ -54,14 +53,22 @@ export default function UserProfileEdit() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
         if (response.data.ok) {
-          setUser(response.data.data);
+          const userDatas = response.data.data;
+          setUserData(userDatas);
+          formik.setValues({
+            username: userDatas.username,
+            email: userDatas.email,
+            firstName: userDatas.firstName,
+            lastName: userDatas.lastName,
+          });
         } else {
           console.error("Error fetching user data:", response.data.message);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        if (error?.response?.status == 403) {
+        if (error?.response?.status === 403) {
           toast({
             title: "Error fetching user data",
             description: "Please login to continue",
@@ -94,18 +101,18 @@ export default function UserProfileEdit() {
       data.append("email", values.email);
       data.append("firstName", values.firstName);
       data.append("lastName", values.lastName);
-      if (values.photoProfile) data.append("photoProfile", values.photoProfile);
+      if (values.photoProfile) data.append("file", values.photoProfile);
       if (values.password) {
         data.append("password", values.password);
       }
 
-      const response = await api.patch(`/auth/account/`, data, {
+      const response = await api.patch(`/auth/account/admin`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
       if (response.data.ok) {
-        // setSelectedFileName("");
         passwordRef.current.value = "";
         confirmPasswordRef.current.value = "";
         toast({
@@ -149,7 +156,7 @@ export default function UserProfileEdit() {
   };
 
   const editSchema = yup.object().shape({
-    username: yup.string(),
+    username: yup.string().required("Required"),
     password: yup
       .string()
       .optional()
@@ -166,21 +173,16 @@ export default function UserProfileEdit() {
     lastName: yup.string(),
   });
 
-  const profile = JSON.parse(localStorage.getItem("profile"));
-
   const formik = useFormik({
     initialValues: {
-      username: profile.username,
-      password: profile.password,
-      confirmpassword: profile.password,
-      email: profile.email,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
+      username: "",
+      lastName: "",
+      firstName: "",
+      email: "",
+      photoProfile: null,
     },
-    validationSchema: editSchema,
-    onSubmit: (values) => {
-      handleUpdate(values);
-    },
+    editSchema,
+    onSubmit: handleUpdate,
   });
 
   return (
@@ -198,144 +200,168 @@ export default function UserProfileEdit() {
           <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
             Edit Profile
           </Heading>
-          <FormControl id="username">
-            <FormLabel>User Icon</FormLabel>
-            <Stack direction={["column", "row"]} spacing={6}>
-              <Center>
-                <Avatar
-                  size="xl"
-                  src={
-                    user
-                      ? `http://${baseURL}/static/${user.photoProfile}`
-                      : "https://www.adebayosegun.com/_next/image?url=%2Fstatic%2Fimages%2Fsegun-adebayo-headshot.jpg&w=3840&q=75"
-                  }>
-                  <AvatarBadge
-                    as={IconButton}
-                    size="sm"
-                    rounded="full"
-                    top="-10px"
-                    colorScheme="red"
-                    aria-label="remove Image"
-                    icon={<SmallCloseIcon />}
+          <form onSubmit={formik.handleSubmit}>
+            <FormControl id="photoProfile">
+              <FormLabel>User Icon</FormLabel>
+              <Stack direction={["column", "row"]} spacing={6}>
+                <Center>
+                  <Avatar
+                    size="xl"
+                    src={
+                      userData
+                        ? `http://${baseURL}/static/${userData.photoProfile}`
+                        : "https://www.adebayosegun.com/_next/image?url=%2Fstatic%2Fimages%2Fsegun-adebayo-headshot.jpg&w=3840&q=75"
+                    }>
+                    {/* <AvatarBadge
+                      as={IconButton}
+                      size="sm"
+                      rounded="full"
+                      top="-10px"
+                      colorScheme="red"
+                      aria-label="remove Image"
+                      icon={<SmallCloseIcon />}
+                    /> */}
+                  </Avatar>
+                </Center>
+                <Center w="full">
+                  <label htmlFor="inputImage">
+                    <Button w="full" as="span">
+                      Change Profile Picture
+                    </Button>
+                  </label>
+                  <input
+                    type="file"
+                    style={{ display: "none" }}
+                    id="inputImage"
+                    name="inputImage"
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        formik.setFieldValue("photoProfile", e.target.files[0]);
+                      }
+                    }}
                   />
-                </Avatar>
-              </Center>
-              <Center w="full">
-                <Button w="full">Change Profile Picture</Button>
-              </Center>
-            </Stack>
-          </FormControl>
-          <FormControl id="username">
-            <FormLabel>User Name</FormLabel>
-            <Input
-              placeholder="UserName"
-              _placeholder={{ color: "gray.500" }}
-              type="text"
-              name="username"
-              onChange={formik.handleChange}
-              value={formik.values.username}
-            />
-          </FormControl>
-          <FormControl id="password">
-            <FormLabel>Password</FormLabel>
-            <InputGroup>
+                </Center>
+              </Stack>
+            </FormControl>
+            <FormControl id="username">
+              <FormLabel>User Name</FormLabel>
               <Input
-                placeholder="Password"
-                _placeholder={{ color: "gray.500" }}
-                type={isOpen ? "text" : "password"}
-                name="password"
-                onchange={formik.handleChange}
-                value={formik.values.password}
+                placeholder="UserName"
+                type="text"
+                name="username"
+                onChange={formik.handleChange}
+                value={formik.values.username}
               />
-              <InputRightElement>
-                <IconButton
-                  variant="ghost"
-                  aria-label={isOpen ? "Mask password" : "Reveal password"}
-                  icon={isOpen ? <HiEyeOff /> : <HiEye />}
-                  onClick={() => {
-                    setIsOpen((open) => !open);
-                  }}
+              <Text color="red.500">
+                {formik.touched.username ? formik.errors.username : ""}
+              </Text>
+            </FormControl>
+            <FormControl id="password">
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input
+                  placeholder="Password"
+                  type={isOpen ? "text" : "password"}
+                  name="password"
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                  ref={passwordRef}
                 />
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-          <FormControl id="ConfirmPassword">
-            <FormLabel>Confirm Password</FormLabel>
-            <InputGroup>
+                <Text color="red.500">
+                  {formik.touched.password ? formik.errors.password : ""}
+                </Text>
+                <InputRightElement>
+                  <IconButton
+                    variant="ghost"
+                    aria-label={isOpen ? "Mask password" : "Reveal password"}
+                    icon={isOpen ? <HiEyeOff /> : <HiEye />}
+                    onClick={() => {
+                      setIsOpen((open) => !open);
+                    }}
+                  />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <FormControl id="ConfirmPassword">
+              <FormLabel>Confirm Password</FormLabel>
+              <InputGroup>
+                <Input
+                  placeholder="Confirm Password"
+                  type={isOpen ? "text" : "password"}
+                  name="confirmpassword"
+                  onchange={formik.handleChange}
+                  value={formik.values.confirmpassword}
+                  ref={confirmPasswordRef}
+                />
+                <Text color="red.500">
+                  {formik.touched.confirmpassword
+                    ? formik.errors.confirmpassword
+                    : ""}
+                </Text>
+                <InputRightElement>
+                  <IconButton
+                    variant="ghost"
+                    aria-label={isOpen ? "Mask password" : "Reveal password"}
+                    icon={isOpen ? <HiEyeOff /> : <HiEye />}
+                    onClick={() => {
+                      setIsOpen((open) => !open);
+                    }}
+                  />
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <FormControl id="email">
+              <FormLabel>Email address</FormLabel>
               <Input
-                placeholder="Confirm Password"
-                _placeholder={{ color: "gray.500" }}
-                type={isOpen ? "text" : "password"}
-                name="confirmpassword"
-                onchange={formik.handleChange}
-                value={formik.values.confirmpassword}
+                placeholder="your-email@example.com"
+                type="email"
+                name="email"
+                onChange={formik.handleChange}
+                value={formik.values.email}
               />
-              <InputRightElement>
-                <IconButton
-                  variant="ghost"
-                  aria-label={isOpen ? "Mask password" : "Reveal password"}
-                  icon={isOpen ? <HiEyeOff /> : <HiEye />}
-                  onClick={() => {
-                    setIsOpen((open) => !open);
-                  }}
-                />
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-          <FormControl id="email">
-            <FormLabel>Email address</FormLabel>
-            <Input
-              placeholder="your-email@example.com"
-              _placeholder={{ color: "gray.500" }}
-              type="email"
-              name="email"
-              onChange={formik.handleChange}
-              value={formik.values.email}
-            />
-          </FormControl>
-          <FormControl id="firstName">
-            <FormLabel>First Name</FormLabel>
-            <Input
-              placeholder="First Name"
-              _placeholder={{ color: "gray.500" }}
-              type="text"
-              name="firstName"
-              onChange={formik.handleChange}
-              value={formik.values.firstName}
-            />
-          </FormControl>
-          <FormControl id="lastName">
-            <FormLabel>Last Name</FormLabel>
-            <Input
-              placeholder="Last Name"
-              _placeholder={{ color: "gray.500" }}
-              type="text"
-              name="lastName"
-              onChange={formik.handleChange}
-              value={formik.values.lastName}
-            />
-          </FormControl>
-          <Stack spacing={6} direction={["column", "row"]}>
-            <Button
-              bg={"blue.400"}
-              color={"white"}
-              w="full"
-              _hover={{
-                bg: "blue.500",
-              }}
-              onClick={handleUpdate}>
-              Submit
-            </Button>
-            <Button
-              bg={"red.400"}
-              color={"white"}
-              w="full"
-              _hover={{
-                bg: "red.500",
-              }}>
-              Cancel
-            </Button>
-          </Stack>
+              <Text color="red.500">
+                {formik.touched.email ? formik.errors.email : ""}
+              </Text>
+            </FormControl>
+            <FormControl id="firstName">
+              <FormLabel>First Name</FormLabel>
+              <Input
+                placeholder="First Name"
+                type="text"
+                name="firstName"
+                onChange={formik.handleChange}
+                value={formik.values.firstName}
+              />
+              <Text color="red.500">
+                {formik.touched.firstName ? formik.errors.firstName : ""}
+              </Text>
+            </FormControl>
+            <FormControl id="lastName">
+              <FormLabel>Last Name</FormLabel>
+              <Input
+                placeholder="Last Name"
+                type="text"
+                name="lastName"
+                onChange={formik.handleChange}
+                value={formik.values.lastName}
+              />
+              <Text color="red.500">
+                {formik.touched.lastName ? formik.errors.lastName : ""}
+              </Text>
+            </FormControl>
+            <Flex mt="5" spacing={6} direction={["column", "row"]}>
+              <Button
+                bg={"blue.400"}
+                color={"white"}
+                w="full"
+                _hover={{
+                  bg: "blue.500",
+                }}
+                type="submit">
+                Submit
+              </Button>
+            </Flex>
+          </form>
         </Stack>
       </Flex>
     </SidebarWithHeader>

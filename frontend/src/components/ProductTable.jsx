@@ -1,28 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image, Flex, Select } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowForwardIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
-import ProductDetailModal from './ProductDetailModal';
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  IconButton,
+  Button,
+  Image,
+  useDisclosure,
+  Flex, Select,
+} from "@chakra-ui/react";
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  EditIcon,
+  DeleteIcon,
+} from "@chakra-ui/icons";
+import ProductDetailModal from "./ProductDetailModal";
+import api from "../api"; // Ensure the path is correct
+import MyComponent from "./UpdateProduct";
 import { SearchBar } from './SearchBar';
-import api from '../api'; // Ensure the path is correct
 
 function ProductTable() {
   const [user, setUser] = useState(null); // Added state to manage user
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); // Added state to manage total pages
-  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({
+    key: "name",
+    direction: "asc",
+  });
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const baseURL = "localhost:8000"
+  const baseURL = "localhost:8000";
 
   const handleProductClick = (productId) => {
     setSelectedProductId(productId);
     setIsModalOpen(true);
   };
-  
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedProductId(null);
@@ -32,7 +53,7 @@ function ProductTable() {
     const fetchUserData = async () => {
       try {
         const storedProfile = localStorage.getItem("profile");
-        const userId = storedProfile ? JSON.parse(storedProfile).id : null;        
+        const userId = storedProfile ? JSON.parse(storedProfile).id : null;
 
         // If userId is not available, log an error and return to prevent API call
         if (!userId) {
@@ -57,7 +78,6 @@ function ProductTable() {
 
     fetchUserData();
   }, []);
-
   const fetchProducts = (query = '') => {
     const token = localStorage.getItem('token');  // Retrieve token from local storage
     api.get(`/product/${currentPage}`, {
@@ -108,6 +128,7 @@ function ProductTable() {
     fetchProducts(query);
   };
 
+
   const handleCategoryChange = (selectedCategory) => {
     setSelectedCategory(selectedCategory);
     fetchProducts(selectedCategory);
@@ -119,10 +140,10 @@ function ProductTable() {
     
   const requestSort = (key) => {
     setSortConfig((prev) => {
-      if (prev.key === key && prev.direction === 'asc') {
-        return { key, direction: 'desc' };
+      if (prev.key === key && prev.direction === "asc") {
+        return { key, direction: "desc" };
       }
-      return { key, direction: 'asc' };
+      return { key, direction: "asc" };
     });
   };
 
@@ -140,8 +161,12 @@ function ProductTable() {
         <Thead>
           <Tr>
             <Th>Image</Th>
-            <Th cursor="pointer" onClick={() => requestSort('name')}>Name</Th>
-            <Th cursor="pointer" onClick={() => requestSort('price')}>Price</Th>
+            <Th cursor="pointer" onClick={() => requestSort("name")}>
+              Name
+            </Th>
+            <Th cursor="pointer" onClick={() => requestSort("price")}>
+              Price
+            </Th>
             <Th>Description</Th>
             <Th>Actions</Th>
           </Tr>
@@ -150,55 +175,58 @@ function ProductTable() {
           {products.map((product, index) => (
             <Tr key={index}>
               <Td>
-                <Image 
-                src={`http://${baseURL}/static/${product.image}`} 
-                alt={product.name} 
-                boxSize="75px" // Adjust size as needed
-                objectFit="cover"
-                fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
+                <Image
+                  src={`http://${baseURL}/static/${product.image}`}
+                  alt={product.name}
+                  boxSize="75px" // Adjust size as needed
+                  objectFit="cover"
+                  fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
                 />
               </Td>
               <Td>{product.name}</Td>
               <Td>{product.price}</Td>
               <Td>{product.description}</Td>
-              {user && user.userRole === 'admin' && 
-              <Td>
-                <Button variant="solid" colorScheme="blue" size="sm" mx={1}>
-                  <EditIcon />
-                </Button>
-                <Button variant="solid" colorScheme="red" size="sm" mx={1}>
-                  <DeleteIcon />
-                </Button>
-              </Td>
-              }
-              {user && user.userRole === 'cashier' &&
-              <Td>
-                <Button onClick={() => handleProductClick(product.id)}>View</Button>
-              </Td>
-              }
+              {user && user.userRole === "admin" && (
+                <Td>
+                  <Button variant="solid" colorScheme="blue" size="sm" mx={1}>
+                    <EditIcon />
+                  </Button>
+                  <Button variant="solid" colorScheme="red" size="sm" mx={1}>
+                    <DeleteIcon />
+                  </Button>
+                </Td>
+              )}
+              {user && user.userRole === "cashier" && (
+                <Td>
+                  <Button onClick={() => handleProductClick(product.id)}>
+                    View
+                  </Button>
+                </Td>
+              )}
             </Tr>
           ))}
         </Tbody>
       </Table>
-      <IconButton 
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
-          ml={4}
-          icon={<ArrowBackIcon />}
-          variant="ghost"
-          aria-label="Previous Page"
+      <IconButton
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        ml={4}
+        icon={<ArrowBackIcon />}
+        variant="ghost"
+        aria-label="Previous Page"
       />
-      <IconButton 
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} // Ensure not exceeding max page
-          ml={4}
-          icon={<ArrowForwardIcon />}
-          variant="ghost"
-          aria-label="Next Page"
+      <IconButton
+        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} // Ensure not exceeding max page
+        ml={4}
+        icon={<ArrowForwardIcon />}
+        variant="ghost"
+        aria-label="Next Page"
       />
-      <ProductDetailModal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
-        productId={selectedProductId} 
+      <ProductDetailModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        productId={selectedProductId}
       />
+      <MyComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
