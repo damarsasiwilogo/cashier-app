@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductTable from '../components/ProductTable';
 import AddCategoryModal from '../components/AddCategoryModal';
 import ShowCategoryModal from '../components/ShowCategoryModal';
+import CartModal from '../components/CartModal'; // <-- Import CartModal component
 import SidebarWithHeader from '../components/sidebar';
 import { Button, Box, Heading, HStack, Spacer, VStack } from "@chakra-ui/react";
-import { useEffect } from 'react';
 import api from '../api';
 
 export const ShowProduct = () => {
-  const [user, setUser] = useState(null); // Added state to manage user
+  const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false); // <-- New state for cart modal
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -71,7 +72,11 @@ export const ShowProduct = () => {
               </>
             )}
             {user && user.userRole === 'cashier' &&
-              <Button colorScheme="teal" size="sm">
+              <Button 
+                colorScheme="teal" 
+                size="sm"
+                onClick={() => setShowCartModal(true)} // <-- Open cart modal on button click
+              >
                 View Cart
               </Button>
             }
@@ -90,6 +95,12 @@ export const ShowProduct = () => {
               addCategory={addCategory}
             />
           </>
+        )}
+        {user && user.userRole === 'cashier' && (
+          <CartModal 
+            isOpen={showCartModal} 
+            onClose={() => setShowCartModal(false)}
+          />
         )}
       </Box>
     </SidebarWithHeader>
