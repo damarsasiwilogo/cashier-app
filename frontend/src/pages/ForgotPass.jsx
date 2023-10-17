@@ -96,23 +96,7 @@ function Login() {
           sm: "8",
         }}>
         <Stack>
-          <Stack alignItems="center">
-            <Image src={Logo} boxSize="300px" />
-            {/* <Stack
-              spacing={{
-                base: "2",
-                md: "3",
-              }}
-              textAlign="center">
-              <Heading
-                size={{
-                  base: "xs",
-                  md: "sm",
-                }}>
-                Reset your password
-              </Heading>
-            </Stack> */}
-          </Stack>
+          <Image alignSelf="center" src={Logo} boxSize="300px" />
           <Stack
             spacing={4}
             w={"full"}
@@ -121,8 +105,8 @@ function Login() {
             rounded={"xl"}
             boxShadow={"lg"}
             p={6}
-            my={12}>
-            <Heading lineHeight={1.1} fontSize={{ base: "2xl", md: "3xl" }}>
+            my={1}>
+            <Heading alignSelf="center" lineHeight={1.1} fontSize={{ base: "md", md: "lg" }}>
               Forgot your password?
             </Heading>
             <Text
