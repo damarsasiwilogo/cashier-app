@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image, Flex } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image, Flex, Select } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import ProductDetailModal from './ProductDetailModal';
 import { SearchBar } from './SearchBar';
@@ -14,6 +14,8 @@ function ProductTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null)
   const baseURL = "localhost:8000"
 
   const handleProductClick = (productId) => {
@@ -25,7 +27,6 @@ function ProductTable() {
     setIsModalOpen(false);
     setSelectedProductId(null);
   };
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -66,7 +67,8 @@ function ProductTable() {
       params: {
         sortBy: sortConfig.key,
         order: sortConfig.direction,
-        qname: query
+        qname: query,
+        categoryId: selectedCategory
       }
     })
     .then(response => {
@@ -77,15 +79,43 @@ function ProductTable() {
       console.error("Error fetching products:", error);
     });
   }
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await api.get('/product/category', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
+            if (response.data.status === "success") {
+                setCategories(response.data.data.categories);
+            } else {
+                console.error("Server responded with an error:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
+
+    fetchCategories();
+}, []);
   
   const handleSearch = (query) => {
     setSearchQuery(query);
     fetchProducts(query);
   };
+
+  const handleCategoryChange = (selectedCategory) => {
+    setSelectedCategory(selectedCategory);
+    fetchProducts(selectedCategory);
+  }
   
   useEffect(() => {
     fetchProducts(searchQuery);
-  }, [currentPage, sortConfig, searchQuery]);
+  }, [currentPage, sortConfig, searchQuery, selectedCategory]);
     
   const requestSort = (key) => {
     setSortConfig((prev) => {
@@ -100,6 +130,11 @@ function ProductTable() {
     <div>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <SearchBar onSearch={handleSearch} />
+        <Select placeholder="Select category" ml={2} w="200px" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            {categories.map((category, index) => (
+                <option key={index} value={category.id}>{category.name}</option>
+            ))}
+        </Select>
       </Flex>
       <Table variant="simple">
         <Thead>
