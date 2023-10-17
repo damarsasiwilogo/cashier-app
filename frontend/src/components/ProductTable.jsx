@@ -226,7 +226,7 @@ function ProductTable() {
         onClose={handleCloseModal}
         productId={selectedProductId}
       />
-      <MyComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* <MyComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
     </div>
   );
 }
