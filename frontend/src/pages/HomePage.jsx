@@ -61,11 +61,18 @@ export const HomePage = () => {
 
           {/* Button linking to /show-product for cashier */}
           {user && user.userRole === 'cashier' && 
-          <Link to="/show-product" style={{ alignSelf: 'flex-start' }}>
-            <Button colorScheme="teal">
+          <Flex direction="row" spacing={4} alignSelf="flex-start">
+          <Link to="/show-product">
+            <Button colorScheme="teal" mr={2}>
               View Products
             </Button>
-          </Link>}
+          </Link>
+          <Link to="/cart">
+            <Button colorScheme="teal" mr={2}>
+              View Cart
+            </Button>
+          </Link>
+          </Flex>}
 
           {/* Buttons for admin */}
           {user && user.userRole === 'admin' && 

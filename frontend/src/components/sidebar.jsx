@@ -28,6 +28,7 @@ import {
   FiBell,
   FiChevronDown,
   FiCalendar,
+  FiShoppingCart,
 } from "react-icons/fi";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
@@ -45,6 +46,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
     { name: "Home", icon: FiHome, ref: "/" },
     { name: "Add Cashier", icon: FiPlusSquare, ref: "/add-cashier", show: role === 'admin' },
     { name: "Add Product", icon: FiPlusSquare, ref: "/add-product", show: role === 'admin' },
+    { name: "Cart", icon: FiShoppingCart, ref: "/cart", show: role === 'cashier' },
     { name: "Show Product", icon: FiCalendar, ref: "/show-product" },
   ].filter(item => item.show !== false);
 
