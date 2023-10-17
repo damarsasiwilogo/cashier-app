@@ -15,6 +15,10 @@ import ResetPassword from "./pages/ResetPass"
 // import api from "./api";
 
 function App() {
+  useEffect(() => {
+    document.title = "Kiefci Jagonya Ayam";
+  }, []);
+
   return (
     <>
       <Routes>
