@@ -24,6 +24,7 @@ const accountSlice = createSlice({
       state.profile = {};
       window.localStorage.setItem("isLoggedIn", false);
       window.localStorage.setItem("profile", JSON.stringify({}));
+      window.localStorage.setItem("token", "");
     },
   },
 });
