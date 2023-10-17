@@ -43,7 +43,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
 
   const LinkItems = [
     { name: "Home", icon: FiHome, ref: "/" },
-    { name: "Add Cashier", icon: FiPlusSquare, show: role === 'admin' },
+    { name: "Add Cashier", icon: FiPlusSquare, ref: "/add-cashier", show: role === 'admin' },
     { name: "Add Product", icon: FiPlusSquare, ref: "/add-product", show: role === 'admin' },
     { name: "Show Product", icon: FiCalendar, ref: "/show-product" },
     { name: "Settings", icon: FiSettings },

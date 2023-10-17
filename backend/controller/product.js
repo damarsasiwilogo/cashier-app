@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 const { Product, Category } = require("../models");
 
 exports.handleCreateProduct = async (req, res, file) => {
-  const { name, price, category, description, isActive } = req.body;
+  const { name, price, categoryId, description, isActive } = req.body;
   const { filename } = req.file;
 
   try {
@@ -11,7 +11,7 @@ exports.handleCreateProduct = async (req, res, file) => {
       name,
       description,
       price,
-      category,
+      categoryId,
       image: filename,
       isActive,
     });
@@ -21,7 +21,7 @@ exports.handleCreateProduct = async (req, res, file) => {
         name: product.name,
         description: product.description,
         price: product.price,
-        category: product.category,
+        categoryId: product.categoryId,
         image: product.image,
         isActive: product.isActive,
       },
@@ -38,8 +38,7 @@ exports.handleCreateProduct = async (req, res, file) => {
 
 exports.handleUpdateProduct = async (req, res) => {
   const { productId } = req.params;
-  const { name, price, category, description, isActive } = req.body;
-  const { filename } = req.file;
+  const { name, price, categoryId, description, isActive } = req.body;
 
   try {
     const product = await Product.findByPk(productId);
@@ -52,21 +51,25 @@ exports.handleUpdateProduct = async (req, res) => {
       });
     }
 
-    product.image = filename;
+    // Check if req.file exists before updating the image
+    if (req.file && req.file.filename) {
+      product.image = req.file.filename;
+    }
+
     product.name = name;
     product.description = description;
     product.price = price;
-    product.category = category;
+    product.categoryId = categoryId;
     product.isActive = isActive;
 
-    product.save();
+    await product.save();
 
     const responseObj = {
       image: product.image,
       name: product.name,
       description: product.description,
       price: product.price,
-      category: product.category,
+      categoryId: product.categoryId,
       isActive: product.isActive,
     };
 
@@ -232,8 +235,8 @@ exports.getProducts = async (req, res) => {
     whereConditions.name = req.filtering.name;
   }
 
-  if (req.filtering.category) {
-    whereConditions.category = req.filtering.category;
+  if (req.filtering.categoryId) {
+    whereConditions.categoryId = req.filtering.categoryId;
   }
 
   try {
@@ -306,7 +309,7 @@ exports.getProductById = async (req, res) => {
 
 // Middleware to handle sorting & filtering
 exports.sortProducts = (req, res, next) => {
-  const { sortBy, order, qname, qcat } = req.query;
+  const { sortBy, order, qname, categoryId } = req.query;
 
   // Check if both sortBy and order are provided or neither is provided
   if (!!sortBy !== !!order) {
@@ -341,25 +344,33 @@ exports.sortProducts = (req, res, next) => {
   }
 
   // Validate and parse query parameters for filtering
-  const queryParams = { name: qname, category: qcat };
-  const likeParams = {};
+  const filterParams = {};
 
-  for (const [key, value] of Object.entries(queryParams)) {
-    if (value) {
-      if (typeof value !== "string") {
-        return res.status(400).json({
-          status: "error",
-          message: `Invalid ${key} parameter. Must be a string.`,
-        });
-      } else {
-        // Create an Op.like pattern for the filtering
-        likeParams[key] = { [Op.like]: `${value}%` };
-      }
+  if (qname) {
+    if (typeof qname !== 'string') {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid qname parameter. Must be a string.',
+      });
     }
+    // Create an Op.like pattern for the filtering by name
+    filterParams.name = { [Op.like]: `${qname}%` }; // Using suffix wildcards
   }
 
-  // Attach filtering parameters to request object
-  req.filtering = likeParams;
+  if (categoryId) {
+    if (isNaN(Number(categoryId))) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Invalid categoryId parameter. Must be a number.',
+      });
+    }
+    // Directly assign categoryId for filtering
+    filterParams.categoryId = categoryId;
+  }
+
+  // Attach filtering parameters to request 
+  console.log(filterParams);
+  req.filtering = filterParams;
 
   // Move to next middleware or route handler
   next();

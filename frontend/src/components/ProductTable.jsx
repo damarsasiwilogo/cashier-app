@@ -10,7 +10,7 @@ import {
   Button,
   Image,
   useDisclosure,
-  Flex,
+  Flex, Select,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -36,6 +36,8 @@ function ProductTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null)
   const baseURL = "localhost:8000";
 
   const handleProductClick = (productId) => {
@@ -85,7 +87,8 @@ function ProductTable() {
       params: {
         sortBy: sortConfig.key,
         order: sortConfig.direction,
-        qname: query
+        qname: query,
+        categoryId: selectedCategory
       }
     })
     .then(response => {
@@ -97,33 +100,44 @@ function ProductTable() {
     });
   }
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await api.get('/product/category', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
+            if (response.data.status === "success") {
+                setCategories(response.data.data.categories);
+            } else {
+                console.error("Server responded with an error:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
+
+    fetchCategories();
+}, []);
+  
   const handleSearch = (query) => {
     setSearchQuery(query);
     fetchProducts(query);
   };
 
-  useEffect(() => {
-    // Fetch products from API
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
-    api
-      .get(`/product/${currentPage}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Use token from local storage
-        },
-        params: {
-          sortBy: sortConfig.key,
-          order: sortConfig.direction,
-        },
-      })
-      .then((response) => {
-        setProducts(response.data.data.products);
-        setTotalPages(response.data.data.pagination.totalPages); // Update total pages
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
-  }, [currentPage, sortConfig]);
 
+  const handleCategoryChange = (selectedCategory) => {
+    setSelectedCategory(selectedCategory);
+    fetchProducts(selectedCategory);
+  }
+  
+  useEffect(() => {
+    fetchProducts(searchQuery);
+  }, [currentPage, sortConfig, searchQuery, selectedCategory]);
+    
   const requestSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key && prev.direction === "asc") {
@@ -137,6 +151,11 @@ function ProductTable() {
     <div>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <SearchBar onSearch={handleSearch} />
+        <Select placeholder="Select category" ml={2} w="200px" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            {categories.map((category, index) => (
+                <option key={index} value={category.id}>{category.name}</option>
+            ))}
+        </Select>
       </Flex>
       <Table variant="simple">
         <Thead>
