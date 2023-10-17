@@ -37,6 +37,7 @@ exports.validateToken = (req, res, next) => {
   }
 };
 
+//userRole is admin use this middleware
 exports.checkUserRole = (req, res, next) => {
   if (req.user.userRole === "cashier") {
     res.status(403).json({
@@ -48,7 +49,7 @@ exports.checkUserRole = (req, res, next) => {
   next();
 };
 
-
+//userRole is cashier use this middleware
 exports.checkUser = (req, res, next) => {
   if (req.user.userRole === "admin") {
     res.status(403).json({
@@ -59,4 +60,3 @@ exports.checkUser = (req, res, next) => {
   }
   next();
 };
-
