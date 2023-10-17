@@ -268,7 +268,7 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
                     onClick={() => {
                       navigate("/profile");
                     }}>
-                    Profile
+                    Edit Profile
                   </MenuItem>
                   <MenuItem>Settings</MenuItem>
                   <MenuDivider />

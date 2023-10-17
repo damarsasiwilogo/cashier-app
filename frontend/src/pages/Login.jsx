@@ -53,7 +53,7 @@ function Login() {
           status: "success",
           title: "Login is success",
           isClosable: true,
-          duration: 1000,
+          duration: 2000,
           onCloseComplete: () => {
             forms.resetForm();
             navigate("/");
@@ -184,7 +184,8 @@ function Login() {
                       <Button
                         loadingText="Signing In"
                         type="submit"
-                        colorScheme="red">
+                        colorScheme="red"
+                        isLoading={isSubmitting}>
                         Sign in
                       </Button>
                     </Stack>
