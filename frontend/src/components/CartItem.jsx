@@ -9,60 +9,60 @@ const Counter = ({ value, id, onChange }) => {
     if (newQuantity < 1) return;
 
     api.patch(`/cart/${id}`, { quantity: newQuantity })
-      .then(response => {
-        const updatedQuantity = response.data.quantity;
-        onChange(updatedQuantity);
-      })
-      .catch(error => {
-        console.error("Error updating cart item:", error);
-      });
-  };
+        .then(response => {
+            const updatedQuantity = response.data.quantity;
+            onChange(id, updatedQuantity);
+        })
+        .catch(error => {
+            console.error("Error updating cart item:", error);
+        });
+};
 
-  return (
-    <Flex align="center">
-      <button onClick={() => handleQuantityChange(value - 1)}>-</button>
-      <Box mx="2">{value}</Box>
-      <button onClick={() => handleQuantityChange(value + 1)}>+</button>
-    </Flex>
-  )
-}  
+    return (
+        <Flex align="center">
+            <button onClick={() => handleQuantityChange(value - 1)}>-</button>
+            <Box mx="2">{value}</Box>
+            <button onClick={() => handleQuantityChange(value + 1)}>+</button>
+        </Flex>
+    )
+}
 
 export const CartItem = (props) => {
-    
     const {
-      quantity,
-      Product: {
-        image: imageUrl,
-        name,
-        description,
-        price,
-      },
-      onChangeQuantity,
-      onClickDelete,
+        id,
+        quantity,
+        Product: {
+            image: imageUrl,
+            name,
+            description,
+            price,
+        },
+        onChangeQuantity,
+        onDelete,   // Use this prop when item is deleted
     } = props;
-  
+
     const [localQuantity, setLocalQuantity] = React.useState(quantity);
     const [isVisible, setIsVisible] = React.useState(true);
-  
+
     React.useEffect(() => {
-      setLocalQuantity(quantity);
-    }, [quantity]);  
+        setLocalQuantity(quantity);
+    }, [quantity]);
 
-  const handleDeleteCartItem = (id) => {
-    setIsVisible(false);
+    const handleDeleteCartItem = () => {
+        setIsVisible(false);
 
-    api.delete(`/cart/${id}`)
-      .then(() => {
-        props.onClickDelete();
-      })
-      .catch(error => {
-        console.error("Error deleting cart item:", error);
-      });
-  };
+        api.delete(`/cart/${id}`)
+            .then(() => {
+                onDelete(id);  // Notify parent about deletion
+            })
+            .catch(error => {
+                console.error("Error deleting cart item:", error);
+            });
+    };
 
-  const totalPrice = price * localQuantity;
+    const totalPrice = price * localQuantity;
 
-  if (!isVisible) return null;
+    if (!isVisible) return null;
   
   return (
     <Flex
@@ -89,12 +89,12 @@ export const CartItem = (props) => {
         }}
       >
         <Counter
-        id={props.id}
-        value={localQuantity}
-        onChange={(val) => {
-            setLocalQuantity(val); // Update the local quantity
-            onChangeQuantity?.(val)
-        }}
+            id={props.id}
+            value={localQuantity}
+            onChange={(itemId, val) => {
+                setLocalQuantity(val); // Update the local quantity
+                onChangeQuantity?.(itemId, val);
+            }}
         />
         <PriceTag price={totalPrice} />
         <CloseButton aria-label={`Delete ${name} from cart`} onClick={() => handleDeleteCartItem(props.id)} />

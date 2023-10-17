@@ -46,7 +46,6 @@ const SidebarContent = ({ onClose, ...rest }) => {
     { name: "Add Cashier", icon: FiPlusSquare, ref: "/add-cashier", show: role === 'admin' },
     { name: "Add Product", icon: FiPlusSquare, ref: "/add-product", show: role === 'admin' },
     { name: "Show Product", icon: FiCalendar, ref: "/show-product" },
-    { name: "Settings", icon: FiSettings },
   ].filter(item => item.show !== false);
 
   useEffect(() => {
@@ -223,12 +222,6 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
             boxSize="125px"></Image>
 
           <HStack spacing={{ base: "0", md: "6" }}>
-            <IconButton
-              size="lg"
-              variant="ghost"
-              aria-label="open menu"
-              icon={<FiBell />}
-            />
             <Flex alignItems={"center"}>
               <Menu>
                 <MenuButton
@@ -275,7 +268,6 @@ const MobileNav = ({ onOpen, needLogin, ...rest }) => {
                     }}>
                     Edit Profile
                   </MenuItem>
-                  <MenuItem>Settings</MenuItem>
                   <MenuDivider />
                   <MenuItem
                     onClick={() => {

@@ -5,9 +5,11 @@ import ShowCategoryModal from '../components/ShowCategoryModal';
 import CartModal from '../components/CartModal'; // <-- Import CartModal component
 import SidebarWithHeader from '../components/sidebar';
 import { Button, Box, Heading, HStack, Spacer, VStack } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
 export const ShowProduct = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -76,7 +78,7 @@ export const ShowProduct = () => {
               <Button 
                 colorScheme="teal" 
                 size="sm"
-                onClick={() => setShowCartModal(true)} // <-- Open cart modal on button click
+                onClick={() => navigate('/cart')} // <-- Open cart modal on button click
               >
                 View Cart
               </Button>
