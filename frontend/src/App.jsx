@@ -14,6 +14,10 @@ import CashierProfile from "./pages/CashierProfile"
 // import api from "./api";
 
 function App() {
+  useEffect(() => {
+    document.title = "Kiefci Jagonya Ayam";
+  }, []);
+
   return (
     <>
       <Routes>
