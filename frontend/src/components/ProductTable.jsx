@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, IconButton, Button, Image, Flex } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon, EditIcon, DeleteIcon } from '@chakra-ui/icons';
 import ProductDetailModal from './ProductDetailModal';
+import { SearchBar } from './SearchBar';
 import api from '../api'; // Ensure the path is correct
 
 function ProductTable() {
@@ -12,6 +13,7 @@ function ProductTable() {
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const baseURL = "localhost:8000"
 
   const handleProductClick = (productId) => {
@@ -55,8 +57,7 @@ function ProductTable() {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    // Fetch products from API
+  const fetchProducts = (query = '') => {
     const token = localStorage.getItem('token');  // Retrieve token from local storage
     api.get(`/product/${currentPage}`, {
       headers: {
@@ -64,18 +65,28 @@ function ProductTable() {
       },
       params: {
         sortBy: sortConfig.key,
-        order: sortConfig.direction
+        order: sortConfig.direction,
+        qname: query
       }
     })
-      .then(response => {
-        setProducts(response.data.data.products);
-        setTotalPages(response.data.data.pagination.totalPages); // Update total pages
-      })
-      .catch(error => {
-        console.error("Error fetching products:", error);
-      });
-  }, [currentPage, sortConfig]);  
+    .then(response => {
+      setProducts(response.data.data.products);
+      setTotalPages(response.data.data.pagination.totalPages); // Update total pages
+    })
+    .catch(error => {
+      console.error("Error fetching products:", error);
+    });
+  }
   
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    fetchProducts(query);
+  };
+  
+  useEffect(() => {
+    fetchProducts(searchQuery);
+  }, [currentPage, sortConfig, searchQuery]);
+    
   const requestSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key && prev.direction === 'asc') {
@@ -87,6 +98,9 @@ function ProductTable() {
 
   return (
     <div>
+      <Flex justifyContent="space-between" alignItems="center" mb={4}>
+        <SearchBar onSearch={handleSearch} />
+      </Flex>
       <Table variant="simple">
         <Thead>
           <Tr>
