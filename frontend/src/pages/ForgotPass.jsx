@@ -1,7 +1,5 @@
 import {
-  Box,
   Button,
-  Checkbox,
   Container,
   FormControl,
   FormErrorMessage,
@@ -18,7 +16,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Logo from "../images/Kiefcie-removebg.png";
-import { PasswordField } from "./Login/PasswordField";
+import { PasswordField } from "../components/PasswordField";
 import api from "../api";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
@@ -30,7 +28,7 @@ import { useNavigate } from "react-router-dom";
 
 const CFaUserAlt = chakra(FaUserAlt);
 
-function Login() {
+function ForgotPass() {
   const toast = useToast();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,9 +71,8 @@ function Login() {
       });
   };
 
-  const loginSchema = yup.object().shape({
+  const inputemailSchema = yup.object().shape({
     username: yup.string().required("Username cant be empty"),
-    password: yup.string().required("Password cant be empty"),
   });
   return (
     <div
@@ -106,26 +103,26 @@ function Login() {
             boxShadow={"lg"}
             p={6}
             my={1}>
-            <Heading alignSelf="center" lineHeight={1.1} fontSize={{ base: "md", md: "lg" }}>
+            <Heading
+              alignSelf="center"
+              lineHeight={1.1}
+              fontSize={{ base: "md", md: "lg" }}>
               Forgot your password?
             </Heading>
-            <Text
-              fontSize={{ base: "sm", sm: "md" }}
-              // color={useColorModeValue('gray.800', 'gray.400')}
-            >
+            <Text fontSize={{ base: "sm", sm: "md" }} alignSelf="center">
               You&apos;ll get an email with a reset link
             </Text>
-            <FormControl id="email">
-              <Input
-                placeholder="your-email@example.com"
-                _placeholder={{ color: "gray.500" }}
-                type="email"
-              />
-            </FormControl>
+            <Stack mb="2">
+              <FormControl id="email">
+                <Input
+                  placeholder="your-email@example.com"
+                  _placeholder={{ color: "gray.500" }}
+                  type="email"
+                />
+              </FormControl>
+            </Stack>
             <Stack spacing={6}>
-              <Button colorScheme="red">
-                Request Reset
-              </Button>
+              <Button colorScheme="red">Request Reset</Button>
             </Stack>
           </Stack>
         </Stack>
@@ -134,4 +131,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgotPass;
