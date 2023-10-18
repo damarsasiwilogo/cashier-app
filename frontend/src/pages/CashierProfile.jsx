@@ -106,7 +106,7 @@ export default function UserProfileEdit() {
         data.append("password", values.password);
       }
 
-      const response = await api.patch(`/auth/account/admin`, data, {
+      const response = await api.patch(`/auth/account/cashier`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -167,7 +167,7 @@ export default function UserProfileEdit() {
     confirmpassword: yup
       .string()
       .optional()
-      .oneOf([yup.ref("password"), ""], "Password doesn't match"),
+      .oneOf([yup.ref("password"), ""], "Password don't match"),
     email: yup.string(),
     firstName: yup.string(),
     lastName: yup.string(),
@@ -213,14 +213,14 @@ export default function UserProfileEdit() {
                         : "https://www.adebayosegun.com/_next/image?url=%2Fstatic%2Fimages%2Fsegun-adebayo-headshot.jpg&w=3840&q=75"
                     }>
                     {/* <AvatarBadge
-                      as={IconButton}
-                      size="sm"
-                      rounded="full"
-                      top="-10px"
-                      colorScheme="red"
-                      aria-label="remove Image"
-                      icon={<SmallCloseIcon />}
-                    /> */}
+                        as={IconButton}
+                        size="sm"
+                        rounded="full"
+                        top="-10px"
+                        colorScheme="red"
+                        aria-label="remove Image"
+                        icon={<SmallCloseIcon />}
+                      /> */}
                   </Avatar>
                 </Center>
                 <Center w="full">
