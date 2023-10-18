@@ -3,28 +3,20 @@ import {
     Button,
     Flex,
     Heading,
-    Link,
     Stack,
     Text,
     useColorModeValue as mode,
+    useToast
 } from '@chakra-ui/react';
 import { FaArrowRight } from 'react-icons/fa';
+import api from '../api'; // Adjust the path to where your api.js file is
 import { formatPrice } from './PriceTag';
+import { useNavigate } from 'react-router-dom';
 
-const OrderSummaryItem = (props) => {
-    const { label, value, children } = props;
-    return (
-        <Flex justify="space-between" fontSize="sm">
-            <Text fontWeight="medium" color={mode('gray.600', 'gray.400')}>
-                {label}
-            </Text>
-            {value ? <Text fontWeight="medium">{value}</Text> : children}
-        </Flex>
-    );
-};
+export const CartOrderSummary = ({ cart }) => {
+    const toast = useToast();
+    const navigate = useNavigate();
 
-export const CartOrderSummary = ({ cart }) => {  // Accept the cart prop
-    // Compute the total price directly based on the cart prop
     const computeTotalPrice = () => {
         let total = 0;
         for (const item of cart) {
@@ -33,23 +25,58 @@ export const CartOrderSummary = ({ cart }) => {  // Accept the cart prop
         return total;
     };
 
+    const handleCheckout = async () => {
+        try {
+            const response = await api.post('/transaction/checkout', { cart: cart });
+            // Handle the response based on your API's specification
+            if (response.status === 200) {
+                toast({
+                    title: "Success",
+                    description: "Checkout successful!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                navigate('/show-product');
+                // You can also navigate to another page, or clear the cart on the frontend, etc.
+            } else {
+                toast({
+                    title: "Error",
+                    description: response.data.message,
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "There was an error during checkout. Please try again.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
     const total = computeTotalPrice();
 
     return (
         <Stack spacing="8" borderWidth="1px" rounded="lg" padding="8" width="full">
             <Heading size="md">Order Summary</Heading>
-
             <Stack spacing="6">
                 <Flex justify="space-between">
-                    <Text fontSize="lg" fontWeight="semibold">
-                        Total
-                    </Text>
-                    <Text fontSize="xl" fontWeight="extrabold">
-                        {formatPrice(total)}
-                    </Text>
+                    <Text fontSize="lg" fontWeight="semibold">Total</Text>
+                    <Text fontSize="xl" fontWeight="extrabold">{formatPrice(total)}</Text>
                 </Flex>
             </Stack>
-            <Button colorScheme="blue" size="lg" fontSize="md" rightIcon={<FaArrowRight />}>
+            <Button 
+                colorScheme="blue" 
+                size="lg" 
+                fontSize="md" 
+                rightIcon={<FaArrowRight />}
+                onClick={handleCheckout}
+            >
                 Checkout
             </Button>
         </Stack>

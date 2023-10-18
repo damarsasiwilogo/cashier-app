@@ -1,9 +1,15 @@
 const { Product, Cart } = require('../models');
+const jwt = require('jsonwebtoken');
 
 // Add product to cart
 exports.addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
+
+    // Decode the token to get the user's ID
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(token, 'ini_jwt_loh');  
+    const userId = decoded.id;  // Extract user's ID from the token's payload
 
     // Check if product exists
     const product = await Product.findByPk(productId);
@@ -12,14 +18,15 @@ exports.addToCart = async (req, res) => {
     }
 
     // Add product to cart or update quantity if product already in cart
-    let cartItem = await Cart.findOne({ where: { productId } });
+    let cartItem = await Cart.findOne({ where: { productId, userId } });  // Include userId in the search criteria
     if (cartItem) {
       cartItem.quantity += quantity;
       await cartItem.save();
     } else {
       cartItem = await Cart.create({
         productId: product.id,
-        quantity: quantity
+        quantity: quantity,
+        userId: userId   // Add userId when creating a new cart item
       });
     }
 
@@ -83,3 +90,23 @@ exports.deleteCartItem = async (req, res) => {
     }
   };
   
+  // Clear all cart items middleware
+  exports.clearCartItems = async (req, res) => {
+    try {
+        // Get the token from the Authorization header
+        const token = req.headers.authorization.split(' ')[1];
+
+        // Decode the token to get the user's ID
+        const decoded = jwt.verify(token, 'ini_jwt_loh');  
+        const userId = decoded.id;  // Extract user's ID from the token's payload
+
+        // Clear all cart items for the user
+        await Cart.destroy({ where: { userId: userId } });
+
+        // Send a success response
+        res.status(200).send({ message: 'Cart items cleared successfully' });
+    } catch (error) {
+        console.error('Error clearing cart items:', error);
+        res.status(500).send({ message: 'Internal server error' });
+    }
+};
