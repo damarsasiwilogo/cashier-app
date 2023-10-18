@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import { 
-    Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
-    NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, 
-    Image, Button, Text, useToast, Box, VStack, Stack
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
+  NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, 
+  Image, Button, Text, useToast, Box
 } from "@chakra-ui/react";
 
 function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
@@ -27,42 +27,6 @@ function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
         .catch((error) => {
           console.error("Error fetching product details:", error);
         });
-  }, [productId, isOpen]);
-
-  const handleAddToCart = () => {
-    // Make an API call to add the product to the cart
-    api.post(`/cart/add`, {
-      productId: product.id,
-      quantity: productCount,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
-    .then(response => {
-      // Notify the user the product was added successfully
-      toast({
-        title: "Product added to cart.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      
-      // Notify the parent component about the addition
-      onAddToCart && onAddToCart(product, productCount);
-
-      // Close the modal
-      onClose();
-    })
-    .catch(error => {
-      console.error('Error adding product to cart:', error);
-      toast({
-        title: "Error adding product to cart.",
-        description: error.message || "Something went wrong.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     }
   }, [productId, isOpen]);
 
