@@ -3,7 +3,7 @@ import api from '../api';
 import { 
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
   NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, 
-  Image, Button, Text, useToast, Box
+  Image, Button, Text, useToast, Box, VStack, Stack
 } from "@chakra-ui/react";
 
 function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
@@ -78,27 +78,24 @@ function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
         <ModalHeader textAlign="center">{product?.name}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Image
-            src={`http://${baseURL}/static/${product?.image}`}
-            alt={product?.name}
-            mb={4}
-          />
-          <Text mb={2}>Price: ${product?.price}</Text>
-          <Text mb={2}>{product?.description}</Text>
-          {product?.Category && (
-            <Text mb={2}>Category: {product?.Category.name}</Text>
-          )}
-          <NumberInput
-            value={productCount}
-            onChange={(value) => setProductCount(value)}
-            min={1}
-          >
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
+          <VStack spacing={4} alignItems="center">
+            <Image 
+              src={`http://${baseURL}/static/${product?.image}`} 
+              alt={product?.name} 
+              width="250px"
+              height="250px"
+            />
+            <Text fontWeight="bold" fontSize="xl">Price: {formatToIDR(product?.price)}</Text>
+            <Text>{product?.description}</Text>
+            {product?.Category && <Text>Category: {product?.Category.name}</Text>}
+            <Stack direction="row" spacing={2} width="160px">
+              <Button size="sm" height="32px" onClick={() => setProductCount(prev => Math.max(prev - 1, 1))}>-</Button>
+              <NumberInput value={productCount} onChange={(value) => setProductCount(value)} min={1} width="100%" height="32px">
+                <NumberInputField px={1} height="100%"/> {/* Set height to 100% to fill the container */}
+              </NumberInput>
+              <Button size="sm" height="32px" onClick={() => setProductCount(prev => prev + 1)}>+</Button>
+            </Stack>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <Box width="100%" display="flex" justifyContent="center"> {/* Center aligned "Add to Cart" button */}
