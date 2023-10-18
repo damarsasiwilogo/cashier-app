@@ -5,7 +5,7 @@ import ShowCategoryModal from "../components/ShowCategoryModal";
 import CartModal from "../components/CartModal"; // <-- Import CartModal component
 import SidebarWithHeader from "../components/sidebar";
 import { Button, Box, Heading, HStack, Spacer, VStack } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 
 export const ShowProduct = () => {
@@ -78,9 +78,11 @@ export const ShowProduct = () => {
               </Button>
             )}
             {user && user.userRole === "cashier" && (
-              <Button colorScheme="teal" size="sm">
-                View Cart
-              </Button>
+              <Link to="/cart">
+                <Button colorScheme="teal" size="sm">
+                  View Cart
+                </Button>
+              </Link>
             )}
           </HStack>
           <ProductTable products={products} />
