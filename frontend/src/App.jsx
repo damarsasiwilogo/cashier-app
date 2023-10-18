@@ -34,7 +34,7 @@ function App() {
         <Route path="/cart/" element={<CartPage />} />
         <Route path="*" element={<h1>Not Found</h1>} />
         <Route path="/forgot-password/" element={<ForgotPassword />} />
-        <Route path="/reset-password/" element={<ResetPassword />} />
+        <Route path="/reset-password/:uniqueCode" element={<ResetPassword />} />
       </Routes>
     </>
   );
