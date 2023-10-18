@@ -10,8 +10,8 @@ const PORT = 8000;
 const sql = require("mysql2");
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 app.use("/static", express.static("public"));
 
 const authRouter = require("./routes/auth");
