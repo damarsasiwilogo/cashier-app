@@ -10,20 +10,22 @@ const PORT = 8000;
 const sql = require("mysql2");
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 app.use("/static", express.static("public"));
 
 const authRouter = require("./routes/auth");
 const productRouter = require("./routes/product");
 const cashierRouter = require("./routes/cashier");
 const cartRouter = require("./routes/cart")
+const transactionRouter = require("./routes/transaction")
 
 // Routing
 app.use("/auth", authRouter);
 app.use("/product", productRouter);
 app.use("/cashier", cashierRouter);
 app.use("/cart", cartRouter);
+app.use("/transaction", transactionRouter);
 
 // 404 middleware
 app.use((req, res) => {

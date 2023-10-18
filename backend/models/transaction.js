@@ -16,7 +16,14 @@ module.exports = (sequelize, DataTypes) => {
   }
   Transaction.init({
     userId: DataTypes.INTEGER,
-    totalAmount: DataTypes.DECIMAL
+    totalAmount: {
+      type: DataTypes.DECIMAL,
+      validate: {
+        isDecimal: true,
+        min: 0
+      }
+    },   
+    items: DataTypes.JSON,
   }, {
     sequelize,
     modelName: 'Transaction',

@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Cart extends Model {
     /**
@@ -11,14 +12,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Cart.belongsTo(models.Product, { foreignKey: 'productId' });
+      Cart.belongsTo(models.Account, { foreignKey: 'userId' }); // Add this line
     }
   }
+
   Cart.init({
     productId: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,  // Add this line
     quantity: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Cart',
   });
+
   return Cart;
 };
