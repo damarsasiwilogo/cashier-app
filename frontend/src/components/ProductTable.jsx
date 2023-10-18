@@ -13,6 +13,7 @@ import {
   Switch,
   FormControl,
   FormLabel,
+  Select,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -40,6 +41,8 @@ function ProductTable() {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [productActive, setProductActive] = useState();
   const [selectedProduct, setSelectedProduct] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null)
   const baseURL = "localhost:8000";
 
   const handleProductClick = (productId, productDetail) => {

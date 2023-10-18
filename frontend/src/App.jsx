@@ -38,7 +38,7 @@ function App() {
         <Route path="/cart/" element={<CartPage />} />
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/forgot-password/" element={<ForgotPassword />} />
-        <Route path="/reset-password/" element={<ResetPassword />} />
+        <Route path="/reset-password/:uniqueCode" element={<ResetPassword />} />
         <Route path="/transactions" element={<TransactionPage />} />
       </Routes>
     </>
