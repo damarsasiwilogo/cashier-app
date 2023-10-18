@@ -6,6 +6,7 @@ const authController = require("../controller/auth");
 const authMiddleware = require("../middleware/auth");
 
 router.post("/", authController.handleLogin);
+//* patch for admin
 router.patch(
   "/account/admin",
   authMiddleware.validateToken,
@@ -13,6 +14,7 @@ router.patch(
   multerUpload.single("file"),
   authController.updateProfile
 );
+//* patch for cashier
 router.patch(
   "/account/cashier",
   authMiddleware.validateToken,
@@ -20,6 +22,7 @@ router.patch(
   multerUpload.single("file"),
   authController.updateProfile
 );
+//* get all user
 router.get(
   "/account/profile/:id",
   authMiddleware.validateToken,

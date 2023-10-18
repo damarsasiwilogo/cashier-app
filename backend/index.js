@@ -17,11 +17,13 @@ app.use("/static", express.static("public"));
 const authRouter = require("./routes/auth");
 const productRouter = require("./routes/product");
 const cashierRouter = require("./routes/cashier");
+const cartRouter = require("./routes/cart")
 
 // Routing
 app.use("/auth", authRouter);
 app.use("/product", productRouter);
 app.use("/cashier", cashierRouter);
+app.use("/cart", cartRouter);
 
 // 404 middleware
 app.use((req, res) => {

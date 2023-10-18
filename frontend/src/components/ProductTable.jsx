@@ -104,32 +104,44 @@ function ProductTable() {
       });
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await api.get("/product/category", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.status === "success") {
+          setCategories(response.data.data.categories);
+        } else {
+          console.error(
+            "Server responded with an error:",
+            response.data.message
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
   const handleSearch = (query) => {
     setSearchQuery(query);
     fetchProducts(query);
   };
 
+  const handleCategoryChange = (selectedCategory) => {
+    setSelectedCategory(selectedCategory);
+    fetchProducts(selectedCategory);
+  };
+
   useEffect(() => {
-    // Fetch products from API
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
-    api
-      .get(`/product/${currentPage}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Use token from local storage
-        },
-        params: {
-          sortBy: sortConfig.key,
-          order: sortConfig.direction,
-        },
-      })
-      .then((response) => {
-        setProducts(response.data.data.products);
-        setTotalPages(response.data.data.pagination.totalPages); // Update total pages
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
-  }, [currentPage, sortConfig]);
+    fetchProducts(searchQuery);
+  }, [currentPage, sortConfig, searchQuery, selectedCategory]);
 
   const requestSort = (key) => {
     setSortConfig((prev) => {
@@ -138,6 +150,13 @@ function ProductTable() {
       }
       return { key, direction: "asc" };
     });
+  };
+
+  const formatToIDR = (amount) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(amount);
   };
 
   const editProductStatus = (e) => {
@@ -152,6 +171,19 @@ function ProductTable() {
     <div>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <SearchBar onSearch={handleSearch} />
+        <Select
+          placeholder="Select category"
+          ml={2}
+          w="200px"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          {categories.map((category, index) => (
+            <option key={index} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </Select>
       </Flex>
       <Table variant="simple">
         <Thead>
@@ -181,7 +213,7 @@ function ProductTable() {
                   />
                 </Td>
                 <Td>{product.name}</Td>
-                <Td>{product.price}</Td>
+                <Td>{formatToIDR(product?.price)}</Td>
                 <Td>{product.description}</Td>
                 {user && user.userRole === "admin" && (
                   <Td>
