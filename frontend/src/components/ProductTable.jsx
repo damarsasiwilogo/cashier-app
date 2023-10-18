@@ -9,11 +9,8 @@ import {
   IconButton,
   Button,
   Image,
-  Flex,
-  Switch,
-  FormControl,
-  FormLabel,
-  Select,
+  useDisclosure,
+  Flex, Select,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -24,7 +21,7 @@ import {
 import ProductDetailModal from "./ProductDetailModal";
 import api from "../api"; // Ensure the path is correct
 import MyComponent from "./UpdateProduct";
-import { SearchBar } from "./SearchBar";
+import { SearchBar } from './SearchBar';
 
 function ProductTable() {
   const [user, setUser] = useState(null); // Added state to manage user
@@ -35,20 +32,16 @@ function ProductTable() {
     key: "name",
     direction: "asc",
   });
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalUpdateProduct, setIsModalUpdateProduct] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [productActive, setProductActive] = useState();
-  const [selectedProduct, setSelectedProduct] = useState({});
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null)
   const baseURL = "localhost:8000";
 
-  const handleProductClick = (productId, productDetail) => {
+  const handleProductClick = (productId) => {
     setSelectedProductId(productId);
-    console.log(productDetail);
-    setSelectedProduct(productDetail);
     setIsModalOpen(true);
   };
   const handleCloseModal = () => {
@@ -85,67 +78,66 @@ function ProductTable() {
 
     fetchUserData();
   }, []);
-  const fetchProducts = (query = "") => {
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
-    api
-      .get(`/product/${currentPage}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Use token from local storage
-        },
-        params: {
-          sortBy: sortConfig.key,
-          order: sortConfig.direction,
-          qname: query,
-        },
-      })
-      .then((response) => {
-        setProducts(response.data.data.products);
-        setTotalPages(response.data.data.pagination.totalPages); // Update total pages
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
-  };
+  const fetchProducts = (query = '') => {
+    const token = localStorage.getItem('token');  // Retrieve token from local storage
+    api.get(`/product/${currentPage}`, {
+      headers: {
+        Authorization: `Bearer ${token}` // Use token from local storage
+      },
+      params: {
+        sortBy: sortConfig.key,
+        order: sortConfig.direction,
+        qname: query,
+        categoryId: selectedCategory
+      }
+    })
+    .then(response => {
+      setProducts(response.data.data.products);
+      setTotalPages(response.data.data.pagination.totalPages); // Update total pages
+    })
+    .catch(error => {
+      console.error("Error fetching products:", error);
+    });
+  }
 
   useEffect(() => {
     const fetchCategories = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await api.get("/product/category", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.data.status === "success") {
-          setCategories(response.data.data.categories);
-        } else {
-          console.error(
-            "Server responded with an error:",
-            response.data.message
-          );
+        try {
+            const token = localStorage.getItem('token');
+            const response = await api.get('/product/category', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
+            if (response.data.status === "success") {
+                setCategories(response.data.data.categories);
+            } else {
+                console.error("Server responded with an error:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Error fetching categories:", error);
         }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
     };
 
     fetchCategories();
-  }, []);
+}, []);
+  
   const handleSearch = (query) => {
     setSearchQuery(query);
     fetchProducts(query);
   };
 
+
   const handleCategoryChange = (selectedCategory) => {
     setSelectedCategory(selectedCategory);
     fetchProducts(selectedCategory);
-  };
-
+  }
+  
   useEffect(() => {
     fetchProducts(searchQuery);
   }, [currentPage, sortConfig, searchQuery, selectedCategory]);
-
+    
   const requestSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key && prev.direction === "asc") {
@@ -156,36 +148,17 @@ function ProductTable() {
   };
 
   const formatToIDR = (amount) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-    }).format(amount);
-  };
-
-  const editProductStatus = (e) => {
-    setProductActive(!productActive);
-    console.log(productActive);
-
-    //patch status setiap onchange
-    //api.patch
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
   };
 
   return (
     <div>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <SearchBar onSearch={handleSearch} />
-        <Select
-          placeholder="Select category"
-          ml={2}
-          w="200px"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          {categories.map((category, index) => (
-            <option key={index} value={category.id}>
-              {category.name}
-            </option>
-          ))}
+        <Select placeholder="Select category" ml={2} w="200px" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            {categories.map((category, index) => (
+                <option key={index} value={category.id}>{category.name}</option>
+            ))}
         </Select>
       </Flex>
       <Table variant="simple">
@@ -203,59 +176,39 @@ function ProductTable() {
           </Tr>
         </Thead>
         <Tbody>
-          {products.map((product, index) => {
-            return (
-              <Tr key={index}>
+          {products.map((product, index) => (
+            <Tr key={index}>
+              <Td>
+                <Image
+                  src={`http://${baseURL}/static/${product.image}`}
+                  alt={product.name}
+                  boxSize="75px" // Adjust size as needed
+                  objectFit="cover"
+                  fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
+                />
+              </Td>
+              <Td>{product.name}</Td>
+              <Td>{formatToIDR(product?.price)}</Td>
+              <Td>{product.description}</Td>
+              {user && user.userRole === "admin" && (
                 <Td>
-                  <Image
-                    src={`http://${baseURL}/static/${product.image}`}
-                    alt={product.name}
-                    boxSize="75px" // Adjust size as needed
-                    objectFit="cover"
-                    fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
-                  />
+                  <Button variant="solid" colorScheme="blue" size="sm" mx={1}>
+                    <EditIcon />
+                  </Button>
+                  <Button variant="solid" colorScheme="red" size="sm" mx={1}>
+                    <DeleteIcon />
+                  </Button>
                 </Td>
-                <Td>{product.name}</Td>
-                <Td>{formatToIDR(product?.price)}</Td>
-                <Td>{product.description}</Td>
-                {user && user.userRole === "admin" && (
-                  <Td>
-                    <Button
-                      onClick={() => {
-                        setIsModalUpdateProduct(true);
-                        setSelectedProduct(product);
-                      }}
-                      variant="solid"
-                      colorScheme="blue"
-                      size="sm"
-                      mx={1}
-                    >
-                      <EditIcon />
-                    </Button>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel htmlFor="email-alerts" mb="0">
-                        Active
-                      </FormLabel>
-                      <Switch
-                        defaultChecked={product?.isActive}
-                        onChange={() => {
-                          editProductStatus();
-                        }}
-                        id="email-alerts"
-                      />
-                    </FormControl>
-                  </Td>
-                )}
-                {user && user.userRole === "cashier" && (
-                  <Td>
-                    <Button onClick={() => handleProductClick(product.id)}>
-                      View
-                    </Button>
-                  </Td>
-                )}
-              </Tr>
-            );
-          })}
+              )}
+              {user && user.userRole === "cashier" && (
+                <Td>
+                  <Button onClick={() => handleProductClick(product.id)}>
+                    View
+                  </Button>
+                </Td>
+              )}
+            </Tr>
+          ))}
         </Tbody>
       </Table>
       <IconButton
@@ -277,11 +230,7 @@ function ProductTable() {
         onClose={handleCloseModal}
         productId={selectedProductId}
       />
-      <MyComponent
-        productDetail={selectedProduct}
-        isOpen={isModalUpdateProduct}
-        onClose={() => setIsModalUpdateProduct(false)}
-      />
+      {/* <MyComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
     </div>
   );
 }
