@@ -3,6 +3,7 @@ import { Box, Text, VStack, HStack, Button, Skeleton, Table, Thead, Tbody, Tr, T
 import api from "../api"; // Ensure the path is correct based on your directory structure
 import TransactionTable from "../components/TransactionTable";
 import SalesAggregateModal from "../components/SalesAggregateModal"; // Adjust the path if needed
+import SalesReportModal from "../components/SalesReportModal"; // Adjust the path if needed
 import SidebarWithHeader from "../components/sidebar";
 
 function TransactionPage() {
@@ -11,6 +12,7 @@ function TransactionPage() {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [salesPerDay, setSalesPerDay] = useState([]);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchTransactions() {
@@ -62,9 +64,7 @@ function TransactionPage() {
                 onClick={() => setIsModalOpen(true)}>
                 Sales Aggregate
             </Button>
-            <Button size="sm" fontSize="sm" colorScheme="blue">
-              Sales Report
-            </Button>
+            <Button size="sm" fontSize="sm" colorScheme="blue" onClick={() => setIsReportModalOpen(true)}>Sales Report</Button>
           </HStack>
         </HStack>
         {loading ? (
@@ -77,7 +77,12 @@ function TransactionPage() {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         salesData={salesPerDay}
-      />    
+      />
+      <SalesReportModal 
+        isOpen={isReportModalOpen} 
+        onClose={() => setIsReportModalOpen(false)} 
+        transactions={transactions}
+      />
     </SidebarWithHeader>
   );
 }
