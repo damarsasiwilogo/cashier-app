@@ -17,10 +17,10 @@ exports.checkout = async (req, res, next) => {
         });        
         console.log("Fetched cart items:", cartItems);
 
-        // If there are no items in the cart, set an error in the request object
+        // If there are no items in the cart, set an error in the request object, return 404 and proceed to the next middleware
         if (!cartItems.length) {
-            req.checkoutError = 'No items in the cart to checkout.';
-            return next();
+            req.checkoutError = 'Cart is empty.';
+            return res.status(404).json({ success: false, message: req.checkoutError });
         }
 
         // Calculate the total amount
