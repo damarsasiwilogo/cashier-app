@@ -69,13 +69,19 @@ export const ShowProduct = () => {
             </Heading>
             <Spacer />
             {user && user.userRole === "admin" && (
-              <Button
-                onClick={() => setShowModal(true)}
-                colorScheme="teal"
+              <>
+              <Button 
+                onClick={() => setShowCategoryModal(true)} 
+                colorScheme="teal" 
                 size="sm"
+                mr={2}  // added some margin for spacing between buttons
               >
+                View Categories
+              </Button>
+              <Button onClick={() => setShowModal(true)} colorScheme="teal" size="sm">
                 Add Category
               </Button>
+            </>
             )}
             {user && user.userRole === "cashier" && (
               <Link to="/cart">
@@ -88,11 +94,17 @@ export const ShowProduct = () => {
           <ProductTable products={products} />
         </VStack>
         {user && user.userRole === "admin" && (
+          <>
+          <ShowCategoryModal
+            isOpen={showCategoryModal} 
+            onClose={() => setShowCategoryModal(false)}
+          />
           <AddCategoryModal
             isOpen={showModal}
             onClose={() => setShowModal(false)}
             addCategory={addCategory}
           />
+        </>
         )}
       </Box>
     </SidebarWithHeader>
