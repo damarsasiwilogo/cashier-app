@@ -9,8 +9,7 @@ import {
   IconButton,
   Button,
   Image,
-  useDisclosure,
-  Flex, Select,
+  Flex,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -21,7 +20,7 @@ import {
 import ProductDetailModal from "./ProductDetailModal";
 import api from "../api"; // Ensure the path is correct
 import MyComponent from "./UpdateProduct";
-import { SearchBar } from './SearchBar';
+import { SearchBar } from "./SearchBar";
 
 function ProductTable() {
   const [user, setUser] = useState(null); // Added state to manage user
@@ -32,12 +31,10 @@ function ProductTable() {
     key: "name",
     direction: "asc",
   });
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalUpdateProduct, setIsModalUpdateProduct] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null)
   const baseURL = "localhost:8000";
 
   const handleProductClick = (productId) => {
@@ -78,27 +75,27 @@ function ProductTable() {
 
     fetchUserData();
   }, []);
-  const fetchProducts = (query = '') => {
-    const token = localStorage.getItem('token');  // Retrieve token from local storage
-    api.get(`/product/${currentPage}`, {
-      headers: {
-        Authorization: `Bearer ${token}` // Use token from local storage
-      },
-      params: {
-        sortBy: sortConfig.key,
-        order: sortConfig.direction,
-        qname: query,
-        categoryId: selectedCategory
-      }
-    })
-    .then(response => {
-      setProducts(response.data.data.products);
-      setTotalPages(response.data.data.pagination.totalPages); // Update total pages
-    })
-    .catch(error => {
-      console.error("Error fetching products:", error);
-    });
-  }
+  const fetchProducts = (query = "") => {
+    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    api
+      .get(`/product/${currentPage}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Use token from local storage
+        },
+        params: {
+          sortBy: sortConfig.key,
+          order: sortConfig.direction,
+          qname: query,
+        },
+      })
+      .then((response) => {
+        setProducts(response.data.data.products);
+        setTotalPages(response.data.data.pagination.totalPages); // Update total pages
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -192,7 +189,16 @@ function ProductTable() {
               <Td>{product.description}</Td>
               {user && user.userRole === "admin" && (
                 <Td>
-                  <Button variant="solid" colorScheme="blue" size="sm" mx={1}>
+                  <Button
+                    onClick={() => {
+                      setIsModalUpdateProduct(true);
+                      setSelectedProductId(product.id);
+                    }}
+                    variant="solid"
+                    colorScheme="blue"
+                    size="sm"
+                    mx={1}
+                  >
                     <EditIcon />
                   </Button>
                   <Button variant="solid" colorScheme="red" size="sm" mx={1}>
@@ -230,7 +236,11 @@ function ProductTable() {
         onClose={handleCloseModal}
         productId={selectedProductId}
       />
-      {/* <MyComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
+      <MyComponent
+        product={selectedProductId}
+        isOpen={isModalUpdateProduct}
+        onClose={() => setIsModalUpdateProduct(false)}
+      />
     </div>
   );
 }

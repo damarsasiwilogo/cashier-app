@@ -3,7 +3,7 @@ const { Op } = require("sequelize");
 const { Product, Category } = require("../models");
 
 exports.handleCreateProduct = async (req, res, file) => {
-  const { name, price, categoryId, description, isActive } = req.body;
+  const { name, price, categoryId, description } = req.body;
   const { filename } = req.file;
 
   try {
@@ -13,7 +13,7 @@ exports.handleCreateProduct = async (req, res, file) => {
       price,
       categoryId,
       image: filename,
-      isActive,
+      isActive: true,
     });
     res.json({
       ok: true,
@@ -21,7 +21,7 @@ exports.handleCreateProduct = async (req, res, file) => {
         name: product.name,
         description: product.description,
         price: product.price,
-        categoryId: product.categoryId,
+        categoryId: product.category,
         image: product.image,
         isActive: product.isActive,
       },
