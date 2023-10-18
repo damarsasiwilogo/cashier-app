@@ -185,8 +185,6 @@ exports.forgotPassword = async (req, res) => {
 
     const result = await Account.update(
       {
-        resetPasswordToken: tokenHash,
-        resetPasswordExpires: tokenExpiry,
         uniqueCode: tokenHash,
       },
       {
@@ -229,10 +227,7 @@ exports.resetPassword = async (req, res) => {
   try {
     const user = await Account.findOne({
       where: {
-        resetPasswordToken: req.body.token,
-        resetPasswordExpires: {
-          [Op.gt]: new Date(),
-        },
+        uniqueCode: req.body.uniqueCode,
       },
     });
 
@@ -248,15 +243,11 @@ exports.resetPassword = async (req, res) => {
     const result = await Account.update(
       {
         password,
-        resetPasswordToken: null,
-        resetPasswordExpires: null,
+        uniqueCode: null,
       },
       {
         where: {
-          resetPasswordToken: req.body.token,
-          resetPasswordExpires: {
-            [Op.gt]: new Date(),
-          },
+          uniqueCode: req.body.uniqueCode,
         },
       }
     );
