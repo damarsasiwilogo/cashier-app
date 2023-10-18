@@ -41,7 +41,8 @@ function ResetPass() {
   //connect db.json when registered user submit on login modal
   const handleSubmitPass = (values, forms) => {
     api
-      .post(`/auth/reset-password/${uniqueCode}`, {
+      .post(`/auth/reset-password`, {
+        token: uniqueCode,
         newPassword: values.newPassword,
         newConfirmpassword: values.newConfirmpassword,
       })
