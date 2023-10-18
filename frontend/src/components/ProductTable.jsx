@@ -13,13 +13,9 @@ import {
   Switch,
   FormControl,
   FormLabel,
+  Select,
 } from "@chakra-ui/react";
-import {
-  ArrowBackIcon,
-  ArrowForwardIcon,
-  EditIcon,
-  DeleteIcon,
-} from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowForwardIcon, EditIcon } from "@chakra-ui/icons";
 import ProductDetailModal from "./ProductDetailModal";
 import api from "../api"; // Ensure the path is correct
 import MyComponent from "./UpdateProduct";
@@ -40,6 +36,8 @@ function ProductTable() {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [productActive, setProductActive] = useState();
   const [selectedProduct, setSelectedProduct] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const baseURL = "localhost:8000";
 
   const handleProductClick = (productId, productDetail) => {
@@ -159,12 +157,36 @@ function ProductTable() {
     }).format(amount);
   };
 
-  const editProductStatus = (e) => {
-    setProductActive(!productActive);
-    console.log(productActive);
+  const deactive = async (id) => {
+    try {
+      // Kirim permintaan HTTP untuk menonaktifkan produk
+      await api.delete(`/product/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-    //patch status setiap onchange
-    //api.patch
+      // Jika permintaan berhasil, perbarui status produk di state
+      setProductActive(false);
+      console.log("Product is deactivated");
+      fetchProducts(searchQuery);
+    } catch (error) {
+      console.error("Failed to deactivate product:", error);
+    }
+  };
+
+  const active = async (id) => {
+    try {
+      await api.post(`/product/activate/${id}`, null, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setProductActive(true);
+      console.log("Product is activated");
+    } catch (error) {
+      console.error("Failed to activate product:", error);
+    }
   };
 
   return (
@@ -234,9 +256,13 @@ function ProductTable() {
                         Active
                       </FormLabel>
                       <Switch
-                        defaultChecked={product?.isActive}
+                        defaultChecked={product.isActive}
                         onChange={() => {
-                          editProductStatus();
+                          if (product?.isActive) {
+                            deactive(product.id);
+                          } else {
+                            active(product.id);
+                          }
                         }}
                         id="email-alerts"
                       />
