@@ -16,63 +16,48 @@ import {
   Text,
 } from "@chakra-ui/react";
 import Logo from "../images/Kiefcie-removebg.png";
-import { PasswordField } from "../components/PasswordField";
 import api from "../api";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import { login } from "../slices/userSlice";
 import { Field, Form, Formik } from "formik";
-import { FaUserAlt } from "react-icons/fa";
-// import { OAuthButtonGroup } from "./Login/OAuthButtonGroup";
 import { useNavigate } from "react-router-dom";
-
-const CFaUserAlt = chakra(FaUserAlt);
 
 function ForgotPass() {
   const toast = useToast();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  //connect db.json when registered user submit on login modal
-  const handleLogin = (values, forms) => {
-    console.log("test");
-    api
-      .post(`/auth`, {
-        identity: values.username,
-        password: values.password,
-      })
-      .then((res) => {
-        const { data } = res;
-        const userProfile = data.data.profile;
-        const token = data.data.token;
-        dispatch(login(userProfile));
-        localStorage.setItem("token", token);
-
-        toast({
-          status: "success",
-          title: "Login is success",
-          isClosable: true,
-          duration: 2000,
-          onCloseComplete: () => {
-            forms.resetForm();
-            navigate("/");
-          },
-        });
-      })
-      .catch((error) => {
-        toast({
-          status: "error",
-          title: "Something wrong",
-          description: error.message,
-          isClosable: true,
-          duration: 5000,
-        });
-        forms.resetForm();
+  const handleResetSubmit = async (values, actions) => {
+    try {
+      const response = await api.post("/auth/forgot-password", values);
+      toast({
+        title: "Success",
+        description: response.data.message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        duration: 2000,
+        onCloseComplete: () => {
+          navigate("/login");
+        },
       });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const inputemailSchema = yup.object().shape({
-    username: yup.string().required("Username cant be empty"),
+    email: yup
+      .string()
+      .email("invalid email format")
+      .required("Email can't be empty"),
   });
   return (
     <div
@@ -94,37 +79,67 @@ function ForgotPass() {
         }}>
         <Stack>
           <Image alignSelf="center" src={Logo} boxSize="300px" />
-          <Stack
-            spacing={4}
-            w={"full"}
-            maxW={"md"}
-            // bg={useColorModeValue('white', 'gray.700')}
-            rounded={"xl"}
-            boxShadow={"lg"}
-            p={6}
-            my={1}>
-            <Heading
-              alignSelf="center"
-              lineHeight={1.1}
-              fontSize={{ base: "md", md: "lg" }}>
-              Forgot your password?
-            </Heading>
-            <Text fontSize={{ base: "sm", sm: "md" }} alignSelf="center">
-              You&apos;ll get an email with a reset link
-            </Text>
-            <Stack mb="2">
-              <FormControl id="email">
-                <Input
-                  placeholder="your-email@example.com"
-                  _placeholder={{ color: "gray.500" }}
-                  type="email"
-                />
-              </FormControl>
-            </Stack>
-            <Stack spacing={6}>
-              <Button colorScheme="red">Request Reset</Button>
-            </Stack>
-          </Stack>
+          <Formik
+            initialValues={{ email: "" }}
+            validationSchema={inputemailSchema}
+            onSubmit={handleResetSubmit}>
+            {({ isSubmitting }) => (
+              <Form>
+                <Stack
+                  spacing={4}
+                  w={"full"}
+                  maxW={"md"}
+                  // bg={useColorModeValue('white', 'gray.700')}
+                  rounded={"xl"}
+                  boxShadow={"lg"}
+                  p={6}
+                  my={1}>
+                  <Heading
+                    alignSelf="center"
+                    lineHeight={1.1}
+                    fontSize={{ base: "md", md: "lg" }}>
+                    Forgot your password?
+                  </Heading>
+                  <Text fontSize={{ base: "sm", sm: "md" }} alignSelf="center">
+                    You&apos;ll get an email with a reset link
+                  </Text>
+                  <Stack mb="2">
+                    <Field name="email">
+                      {({ field, form }) => (
+                        <FormControl
+                          id="email"
+                          isInvalid={form.errors.email && form.touched.email}
+                          isDisabled={isSubmitting}>
+                          {/* <FormLabel
+                            fontSize={{ base: "sm", sm: "md" }}
+                            justifyContent="center">
+                            You&apos;ll get an email with a reset link
+                          </FormLabel> */}
+                          <Input
+                            placeholder="your-email@example.com"
+                            type="email"
+                            {...field}
+                          />
+                          <FormErrorMessage>
+                            {form.errors.email}
+                          </FormErrorMessage>
+                        </FormControl>
+                      )}
+                    </Field>
+                  </Stack>
+                  <Stack spacing={6}>
+                    <Button
+                      loadingText="Sending email"
+                      type="submit"
+                      colorScheme="red"
+                      isLoading={isSubmitting}>
+                      Request Reset
+                    </Button>
+                  </Stack>
+                </Stack>
+              </Form>
+            )}
+          </Formik>
         </Stack>
       </Container>
     </div>

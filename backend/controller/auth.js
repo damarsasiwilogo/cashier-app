@@ -6,6 +6,7 @@ const hbs = require("handlebars");
 const { Account } = require("../models");
 const crypto = require("crypto");
 const JWT_SECRET_KEY = "ini_jwt_loh";
+const mailer = require("../lib/nodemailer");
 
 exports.handleLogin = async (req, res) => {
   const { identity: identity, password } = req.body;
@@ -170,10 +171,11 @@ exports.forgotPassword = async (req, res) => {
     const user = await Account.findOne({
       where: { email: req.body.email },
     });
+
     if (!user) {
       res.status(400).json({
         ok: false,
-        message: "Account doesn't exist Broo!!",
+        message: "Email is not regitered Broo!!",
       });
     }
 
@@ -185,6 +187,7 @@ exports.forgotPassword = async (req, res) => {
       {
         resetPasswordToken: tokenHash,
         resetPasswordExpires: tokenExpiry,
+        uniqueCode: tokenHash,
       },
       {
         where: { email: req.body.email },
@@ -199,7 +202,14 @@ exports.forgotPassword = async (req, res) => {
 
     const templateCompile = hbs.compile(templateRaw);
     const emailHTML = templateCompile({
-      firstName: result.firstName,
+      userName: user.username,
+      resetLink,
+    });
+    const resultEmail = await mailer.sendMail({
+      to: user.email,
+      from: "dummybro06@gmail.com",
+      subject: "Reset your password to continue",
+      html: emailHTML,
     });
 
     res.status(200).json({
@@ -208,6 +218,54 @@ exports.forgotPassword = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    res.status(500).json({
+      ok: false,
+      message: String(err),
+    });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const user = await Account.findOne({
+      where: {
+        resetPasswordToken: req.body.token,
+        resetPasswordExpires: {
+          [Op.gt]: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      res.status(400).json({
+        ok: false,
+        message: "Password reset token is invalid or has expired Broo!!",
+      });
+      return;
+    }
+
+    const password = await bcrypt.hash(req.body.password, 10);
+    const result = await Account.update(
+      {
+        password,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
+      {
+        where: {
+          resetPasswordToken: req.body.token,
+          resetPasswordExpires: {
+            [Op.gt]: new Date(),
+          },
+        },
+      }
+    );
+
+    res.status(200).json({
+      ok: true,
+      message: "Your password has been changed Broo!!",
+    });
+  } catch (err) {
     res.status(500).json({
       ok: false,
       message: String(err),
