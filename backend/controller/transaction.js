@@ -48,3 +48,14 @@ exports.checkout = async (req, res, next) => {
         next();
     }
 };
+
+exports.getAllTransactions = async (req, res) => {
+  try {
+    const transactions = await Transaction.findAll({
+      include: 'Account' // This will include the associated Account details based on the userId foreign key.
+    });
+    res.status(200).json(transactions);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving transactions', error: error.message });
+  }
+};

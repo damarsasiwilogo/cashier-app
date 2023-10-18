@@ -20,5 +20,12 @@ router.post(
         res.json({ success: true, message: 'Checkout successful and cart cleared.' });
     }
 );
-        
+
+router.get(
+    '/', 
+    authMiddleware.validateToken,
+    authMiddleware.checkUserRole,
+    transactionController.getAllTransactions
+);
+
 module.exports = router;
