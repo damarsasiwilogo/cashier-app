@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const { Op } = require("sequelize");
 const fs = require("fs");
 const { Account } = require("../models");
+const { log } = require("util");
 
 const JWT_SECRET_KEY = "ini_jwt_loh";
 
@@ -16,7 +17,7 @@ exports.handleCreateCashier = async (req, res) => {
       firstName,
       lastName,
       userRole: "cashier",
-      isActive,
+      isActive: true,
     });
     res.json({
       ok: true,

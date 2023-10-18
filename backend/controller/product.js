@@ -6,6 +6,9 @@ exports.handleCreateProduct = async (req, res, file) => {
   const { name, price, categoryId, description } = req.body;
   const { filename } = req.file;
 
+  console.log(filename);
+  console.log(req.file);
+
   try {
     const product = await Product.create({
       name,

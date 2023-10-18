@@ -10,6 +10,9 @@ import {
   Button,
   Image,
   Flex,
+  Switch,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -35,10 +38,14 @@ function ProductTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdateProduct, setIsModalUpdateProduct] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [productActive, setProductActive] = useState();
+  const [selectedProduct, setSelectedProduct] = useState({});
   const baseURL = "localhost:8000";
 
-  const handleProductClick = (productId) => {
+  const handleProductClick = (productId, productDetail) => {
     setSelectedProductId(productId);
+    console.log(productDetail);
+    setSelectedProduct(productDetail);
     setIsModalOpen(true);
   };
   const handleCloseModal = () => {
@@ -133,6 +140,14 @@ function ProductTable() {
     });
   };
 
+  const editProductStatus = (e) => {
+    setProductActive(!productActive);
+    console.log(productActive);
+
+    //patch status setiap onchange
+    //api.patch
+  };
+
   return (
     <div>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
@@ -153,48 +168,59 @@ function ProductTable() {
           </Tr>
         </Thead>
         <Tbody>
-          {products.map((product, index) => (
-            <Tr key={index}>
-              <Td>
-                <Image
-                  src={`http://${baseURL}/static/${product.image}`}
-                  alt={product.name}
-                  boxSize="75px" // Adjust size as needed
-                  objectFit="cover"
-                  fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
-                />
-              </Td>
-              <Td>{product.name}</Td>
-              <Td>{product.price}</Td>
-              <Td>{product.description}</Td>
-              {user && user.userRole === "admin" && (
+          {products.map((product, index) => {
+            return (
+              <Tr key={index}>
                 <Td>
-                  <Button
-                    onClick={() => {
-                      setIsModalUpdateProduct(true);
-                      setSelectedProductId(product.id);
-                    }}
-                    variant="solid"
-                    colorScheme="blue"
-                    size="sm"
-                    mx={1}
-                  >
-                    <EditIcon />
-                  </Button>
-                  <Button variant="solid" colorScheme="red" size="sm" mx={1}>
-                    <DeleteIcon />
-                  </Button>
+                  <Image
+                    src={`http://${baseURL}/static/${product.image}`}
+                    alt={product.name}
+                    boxSize="75px" // Adjust size as needed
+                    objectFit="cover"
+                    fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
+                  />
                 </Td>
-              )}
-              {user && user.userRole === "cashier" && (
-                <Td>
-                  <Button onClick={() => handleProductClick(product.id)}>
-                    View
-                  </Button>
-                </Td>
-              )}
-            </Tr>
-          ))}
+                <Td>{product.name}</Td>
+                <Td>{product.price}</Td>
+                <Td>{product.description}</Td>
+                {user && user.userRole === "admin" && (
+                  <Td>
+                    <Button
+                      onClick={() => {
+                        setIsModalUpdateProduct(true);
+                        setSelectedProduct(product);
+                      }}
+                      variant="solid"
+                      colorScheme="blue"
+                      size="sm"
+                      mx={1}
+                    >
+                      <EditIcon />
+                    </Button>
+                    <FormControl display="flex" alignItems="center">
+                      <FormLabel htmlFor="email-alerts" mb="0">
+                        Active
+                      </FormLabel>
+                      <Switch
+                        defaultChecked={product?.isActive}
+                        onChange={() => {
+                          editProductStatus();
+                        }}
+                        id="email-alerts"
+                      />
+                    </FormControl>
+                  </Td>
+                )}
+                {user && user.userRole === "cashier" && (
+                  <Td>
+                    <Button onClick={() => handleProductClick(product.id)}>
+                      View
+                    </Button>
+                  </Td>
+                )}
+              </Tr>
+            );
+          })}
         </Tbody>
       </Table>
       <IconButton
@@ -217,7 +243,7 @@ function ProductTable() {
         productId={selectedProductId}
       />
       <MyComponent
-        product={selectedProductId}
+        productDetail={selectedProduct}
         isOpen={isModalUpdateProduct}
         onClose={() => setIsModalUpdateProduct(false)}
       />

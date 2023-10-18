@@ -23,7 +23,7 @@ import { useDropzone } from "react-dropzone";
 import React, { useEffect, useState } from "react";
 import api from "../api";
 
-function MyComponent({ isOpen, onClose, product }) {
+function MyComponent({ isOpen, onClose, productDetail }) {
   const toast = useToast();
   const [categories, setCategories] = useState([]);
 
@@ -54,6 +54,17 @@ function MyComponent({ isOpen, onClose, product }) {
     validateOnChange: false,
     onSubmit: async (value, forms) => {
       const formData = new FormData();
+
+      console.log("test");
+
+      //   const input = {
+      //     name: value.name,
+      //     price: value.price,
+      //     categoryId: value.category,
+      //     description: value.description,
+      //     image: value.image,
+      //   };
+
       formData.append("name", value.name);
       formData.append("price", value.price);
       formData.append("categoryId", value.category);
@@ -61,11 +72,7 @@ function MyComponent({ isOpen, onClose, product }) {
       formData.append("image", value.image);
 
       try {
-        await api.patch(`/product/${product.id}`, formData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await api.patch(`/product/${productDetail?.id}`, formData);
         formik.setSubmitting(false);
         toast({
           status: "success",
@@ -112,14 +119,10 @@ function MyComponent({ isOpen, onClose, product }) {
     <div>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit Product</ModalHeader>
-          <ModalBody>
-            <form
-              onSubmit={(e) => {
-                formik.handleSubmit(e);
-              }}
-            >
+        <form onSubmit={formik.handleSubmit}>
+          <ModalContent>
+            <ModalHeader>Edit Product</ModalHeader>
+            <ModalBody>
               <Box>
                 <Stack spacing="24px" textAlign="left">
                   <FormControl isInvalid={formik.errors.name}>
@@ -129,6 +132,7 @@ function MyComponent({ isOpen, onClose, product }) {
                         onChange={(e) =>
                           formik.setFieldValue("name", e.target.value)
                         }
+                        placeholder={productDetail?.name}
                         value={formik.values.name}
                       ></Input>
                     </Box>
@@ -141,6 +145,7 @@ function MyComponent({ isOpen, onClose, product }) {
                         onChange={(e) =>
                           formik.setFieldValue("price", e.target.value)
                         }
+                        placeholder={productDetail?.price}
                         value={formik.values.price}
                       ></Input>
                     </Box>
@@ -175,6 +180,7 @@ function MyComponent({ isOpen, onClose, product }) {
                         onChange={(e) =>
                           formik.setFieldValue("description", e.target.value)
                         }
+                        placeholder={productDetail?.description}
                         value={formik.values.description}
                       ></Textarea>
                     </Box>
@@ -213,22 +219,25 @@ function MyComponent({ isOpen, onClose, product }) {
                   </FormControl>
                 </Stack>
               </Box>
-            </form>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              marginRight="10px"
-              colorScheme="red"
-              onClick={onClose}
-              disabled={formik.isSubmitting}
-            >
-              Update
-            </Button>
-            <Button variant="outline" colorScheme="red" onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                marginRight="10px"
+                colorScheme="red"
+                type="submit"
+                //   onClick={() => {
+                //     onClose();
+                //   }}
+                disabled={formik.isSubmitting}
+              >
+                Update
+              </Button>
+              <Button variant="outline" colorScheme="red" onClick={onClose}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </form>
       </Modal>
     </div>
   );

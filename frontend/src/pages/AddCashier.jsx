@@ -19,23 +19,22 @@ function AddCashierPage() {
   const toast = useToast();
 
   const handleCashier = (values, forms) => {
-    console.log("test");
-
-    const formData = new FormData();
-
     // Append the fields to the FormData object
-    formData.append("username", values.username);
-    formData.append("password", values.password);
-    formData.append("email", values.email);
-    formData.append("firstName", values.firstName);
-    formData.append("lastName", values.lastName);
+
+    const input = {
+      username: values.username,
+      password: values.password,
+      email: values.email,
+      firstName: values.firstName,
+      lastName: values.lastName,
+    };
+
     api
-      .post(`/cashier`, formData, {
+      .post(`/cashier`, input, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-
       .then((res) => {
         toast({
           status: "success",
@@ -43,6 +42,9 @@ function AddCashierPage() {
           isClosable: true,
           duration: 1000,
         });
+
+        console.log(res.data);
+
         forms.resetForm();
       })
       .catch((error) => {
@@ -78,9 +80,9 @@ function AddCashierPage() {
               lastName: "",
             }}
             validationSchema={cashierSchema}
-            onSubmit={handleCashier}
+            onSubmit={(values, forms) => handleCashier(values, forms)}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, values }) => (
               <Form>
                 <Stack spacing="5" mb="2">
                   <Field name="username">
@@ -92,7 +94,12 @@ function AddCashierPage() {
                         isDisabled={isSubmitting}
                       >
                         <FormLabel>Username</FormLabel>
-                        <Input type="text" placeholder="Username" {...field} />
+                        <Input
+                          type="text"
+                          placeholder="Username"
+                          value={values.username}
+                          {...field}
+                        />
                         <FormErrorMessage>
                           {form.errors.username}
                         </FormErrorMessage>
@@ -105,6 +112,7 @@ function AddCashierPage() {
                         field={field}
                         form={form}
                         isSubmitting={isSubmitting}
+                        value={values.password}
                       />
                     )}
                   </Field>
@@ -115,7 +123,12 @@ function AddCashierPage() {
                         isDisabled={isSubmitting}
                       >
                         <FormLabel>email</FormLabel>
-                        <Input type="text" placeholder="Email" {...field} />
+                        <Input
+                          type="text"
+                          placeholder="Email"
+                          value={values.email}
+                          {...field}
+                        />
                         <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                       </FormControl>
                     )}
@@ -132,6 +145,7 @@ function AddCashierPage() {
                         <Input
                           type="text"
                           placeholder="First Name"
+                          value={values.firstName}
                           {...field}
                         />
                         <FormErrorMessage>
@@ -149,7 +163,12 @@ function AddCashierPage() {
                         isDisabled={isSubmitting}
                       >
                         <FormLabel>lastName</FormLabel>
-                        <Input type="text" placeholder="Last Name" {...field} />
+                        <Input
+                          type="text"
+                          placeholder="Last Name"
+                          value={values.lastName}
+                          {...field}
+                        />
                         <FormErrorMessage>
                           {form.errors.lastName}
                         </FormErrorMessage>

@@ -1,6 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api'; // Adjust this import path based on your file structure
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, Image, Button, Text } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import api from "../api"; // Adjust this import path based on your file structure
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Image,
+  Button,
+  Text,
+} from "@chakra-ui/react";
 
 function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
   const [product, setProduct] = useState(null);
@@ -9,17 +25,19 @@ function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
 
   useEffect(() => {
     if (productId && isOpen) {
-      api.get(`/product/detail/${productId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-      .then(response => {
-        setProduct(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching product details:', error);
-      });
+      api
+        .get(`/product/detail/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setProduct(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching product details:", error);
+        });
     }
   }, [productId, isOpen]);
 
@@ -30,11 +48,21 @@ function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
         <ModalHeader>{product?.name}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Image src={`http://${baseURL}/static/${product?.image}`} alt={product?.name} mb={4} />
+          <Image
+            src={`http://${baseURL}/static/${product?.image}`}
+            alt={product?.name}
+            mb={4}
+          />
           <Text mb={2}>Price: ${product?.price}</Text>
           <Text mb={2}>{product?.description}</Text>
-          {product?.Category && <Text mb={2}>Category: {product?.Category.name}</Text>}
-          <NumberInput value={productCount} onChange={(value) => setProductCount(value)} min={1}>
+          {product?.Category && (
+            <Text mb={2}>Category: {product?.Category.name}</Text>
+          )}
+          <NumberInput
+            value={productCount}
+            onChange={(value) => setProductCount(value)}
+            min={1}
+          >
             <NumberInputField />
             <NumberInputStepper>
               <NumberIncrementStepper />
