@@ -10,6 +10,7 @@ import {
   Button,
   Image,
   Flex,
+  Select,
 } from "@chakra-ui/react";
 import {
   ArrowBackIcon,
@@ -35,6 +36,8 @@ function ProductTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalUpdateProduct, setIsModalUpdateProduct] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null)
   const baseURL = "localhost:8000";
 
   const handleProductClick = (productId) => {
