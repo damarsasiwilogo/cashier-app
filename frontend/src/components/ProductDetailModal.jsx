@@ -1,9 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api';
-import { 
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, 
-  NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper, 
-  Image, Button, Text, useToast, Box, VStack, Stack
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import {
@@ -40,11 +34,11 @@ function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
           },
         })
         .then((response) => {
+          console.log(response.data);
           setProduct(response.data);
         })
         .catch((error) => {
           console.error("Error fetching product details:", error);
-        });
         });
     }
   }, [productId, isOpen]);
@@ -106,24 +100,6 @@ function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={4} alignItems="center">
-            <Image 
-              src={`http://${baseURL}/static/${product?.image}`} 
-              alt={product?.name} 
-              width="250px"
-              height="250px"
-            />
-            <Text fontWeight="bold" fontSize="xl">Price: {formatToIDR(product?.price)}</Text>
-            <Text>{product?.description}</Text>
-            {product?.Category && <Text>Category: {product?.Category.name}</Text>}
-            <Stack direction="row" spacing={2} width="160px">
-              <Button size="sm" height="32px" onClick={() => setProductCount(prev => Math.max(prev - 1, 1))}>-</Button>
-              <NumberInput value={productCount} onChange={(value) => setProductCount(value)} min={1} width="100%" height="32px">
-                <NumberInputField px={1} height="100%"/> {/* Set height to 100% to fill the container */}
-              </NumberInput>
-              <Button size="sm" height="32px" onClick={() => setProductCount(prev => prev + 1)}>+</Button>
-            </Stack>
-          </VStack>
-          <VStack spacing={4} alignItems="center">
             <Image
               src={`http://${baseURL}/static/${product?.image}`}
               alt={product?.name}
@@ -131,10 +107,12 @@ function ProductDetailModal({ isOpen, onClose, productId, onAddToCart }) {
               height="250px"
             />
             <Text fontWeight="bold" fontSize="xl">
-              {formatToIDR(product?.price)}
+              Price: {formatToIDR(product?.price)}
             </Text>
             <Text>{product?.description}</Text>
-            {product?.Category && <Text>{product?.Category.name}</Text>}
+            {product?.Category && (
+              <Text>Category: {product?.Category.name}</Text>
+            )}
             <Stack direction="row" spacing={2} width="160px">
               <Button
                 size="sm"

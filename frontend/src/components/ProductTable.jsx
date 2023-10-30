@@ -12,9 +12,13 @@ import {
   useDisclosure,
   Flex,
   Select,
-  Select,
 } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowForwardIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  EditIcon,
+  DeleteIcon,
+} from "@chakra-ui/icons";
 import ProductDetailModal from "./ProductDetailModal";
 import api from "../api"; // Ensure the path is correct
 import MyComponent from "./UpdateProduct";
@@ -33,8 +37,6 @@ function ProductTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const baseURL = "localhost:8000";
@@ -154,42 +156,6 @@ function ProductTable() {
       style: "currency",
       currency: "IDR",
     }).format(amount);
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-    }).format(amount);
-  };
-
-  const deactive = async (id) => {
-    try {
-      // Kirim permintaan HTTP untuk menonaktifkan produk
-      await api.delete(`/product/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      // Jika permintaan berhasil, perbarui status produk di state
-      setProductActive(false);
-      console.log("Product is deactivated");
-      fetchProducts(searchQuery);
-    } catch (error) {
-      console.error("Failed to deactivate product:", error);
-    }
-  };
-
-  const active = async (id) => {
-    try {
-      await api.post(`/product/activate/${id}`, null, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setProductActive(true);
-      console.log("Product is activated");
-    } catch (error) {
-      console.error("Failed to activate product:", error);
-    }
   };
 
   return (
@@ -258,63 +224,6 @@ function ProductTable() {
               )}
             </Tr>
           ))}
-          {products.map((product, index) => {
-            return (
-              <Tr key={index}>
-                <Td>
-                  <Image
-                    src={`http://${baseURL}/static/${product.image}`}
-                    alt={product.name}
-                    boxSize="75px" // Adjust size as needed
-                    objectFit="cover"
-                    fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
-                  />
-                </Td>
-                <Td>{product.name}</Td>
-                <Td>{formatToIDR(product?.price)}</Td>
-                <Td>{product.description}</Td>
-                {user && user.userRole === "admin" && (
-                  <Td>
-                    <Button
-                      onClick={() => {
-                        setIsModalUpdateProduct(true);
-                        setSelectedProduct(product);
-                      }}
-                      variant="solid"
-                      colorScheme="blue"
-                      size="sm"
-                      mx={1}
-                    >
-                      <EditIcon />
-                    </Button>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel htmlFor="email-alerts" mb="0">
-                        Active
-                      </FormLabel>
-                      <Switch
-                        defaultChecked={product.isActive}
-                        onChange={() => {
-                          if (product?.isActive) {
-                            deactive(product.id);
-                          } else {
-                            active(product.id);
-                          }
-                        }}
-                        id="email-alerts"
-                      />
-                    </FormControl>
-                  </Td>
-                )}
-                {user && user.userRole === "cashier" && (
-                  <Td>
-                    <Button onClick={() => handleProductClick(product.id)}>
-                      View
-                    </Button>
-                  </Td>
-                )}
-              </Tr>
-            );
-          })}
         </Tbody>
       </Table>
       <IconButton
