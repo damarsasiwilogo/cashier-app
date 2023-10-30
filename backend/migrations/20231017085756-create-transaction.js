@@ -15,10 +15,14 @@ module.exports = {
           model: 'Accounts',
           key: 'id'
         },
+        onDelete: 'CASCADE',
         allowNull: false
       },
       totalAmount: {
         type: Sequelize.DECIMAL
+      },
+      items: {
+        type: Sequelize.JSON
       },
       createdAt: {
         allowNull: false,
@@ -29,6 +33,7 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.addIndex('Transactions', ['userId']);
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Transactions');

@@ -25,7 +25,7 @@ import { login } from "../slices/userSlice";
 import { Field, Form, Formik } from "formik";
 import { FaUserAlt } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 
@@ -36,14 +36,15 @@ function ResetPass() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { uniqueCode } = useParams();
 
   //connect db.json when registered user submit on login modal
-  const handleLogin = (values, forms) => {
-    console.log("test");
+  const handleSubmitPass = (values, forms) => {
     api
-      .post(`/auth`, {
-        identity: values.username,
-        password: values.password,
+      .post(`/auth/reset-password`, {
+        token: uniqueCode,
+        newPassword: values.newPassword,
+        newConfirmpassword: values.newConfirmpassword,
       })
       .then((res) => {
         const { data } = res;
@@ -54,24 +55,23 @@ function ResetPass() {
 
         toast({
           status: "success",
-          title: "Login is success",
+          title: "Reset Password is success",
           isClosable: true,
           duration: 2000,
           onCloseComplete: () => {
             forms.resetForm();
-            navigate("/");
+            navigate("/login");
           },
         });
       })
-      .catch((error) => {
+      .catch((err) => {
         toast({
           status: "error",
-          title: "Something wrong",
-          description: error.message,
+          title: "Reset Password is failed",
+          description: err.response.data.message,
           isClosable: true,
-          duration: 5000,
+          duration: 2000,
         });
-        forms.resetForm();
       });
   };
 
@@ -136,7 +136,7 @@ function ResetPass() {
               <Formik
                 initialValues={{ newPassword: "", newConfirmpassword: "" }}
                 validationSchema={resetSchema}
-                onSubmit={handleLogin}>
+                onSubmit={handleSubmitPass}>
                 {({ isSubmitting }) => (
                   <Form>
                     <Stack spacing="5" mb="2">
@@ -191,7 +191,7 @@ function ResetPass() {
                     </Stack>
                     <Stack spacing="6">
                       <Button
-                        loadingText="Signing In"
+                        loadingText="Resetting Password"
                         type="submit"
                         colorScheme="red"
                         isLoading={isSubmitting}>

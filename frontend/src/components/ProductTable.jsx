@@ -9,10 +9,9 @@ import {
   IconButton,
   Button,
   Image,
+  useDisclosure,
   Flex,
-  Switch,
-  FormControl,
-  FormLabel,
+  Select,
   Select,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, ArrowForwardIcon, EditIcon } from "@chakra-ui/icons";
@@ -32,18 +31,16 @@ function ProductTable() {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalUpdateProduct, setIsModalUpdateProduct] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [productActive, setProductActive] = useState();
-  const [selectedProduct, setSelectedProduct] = useState({});
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const baseURL = "localhost:8000";
 
-  const handleProductClick = (productId, productDetail) => {
+  const handleProductClick = (productId) => {
     setSelectedProductId(productId);
-    console.log(productDetail);
-    setSelectedProduct(productDetail);
     setIsModalOpen(true);
   };
   const handleCloseModal = () => {
@@ -91,6 +88,7 @@ function ProductTable() {
           sortBy: sortConfig.key,
           order: sortConfig.direction,
           qname: query,
+          categoryId: selectedCategory,
         },
       })
       .then((response) => {
@@ -127,6 +125,7 @@ function ProductTable() {
 
     fetchCategories();
   }, []);
+
   const handleSearch = (query) => {
     setSearchQuery(query);
     fetchProducts(query);
@@ -151,6 +150,10 @@ function ProductTable() {
   };
 
   const formatToIDR = (amount) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(amount);
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
@@ -222,6 +225,39 @@ function ProductTable() {
           </Tr>
         </Thead>
         <Tbody>
+          {products.map((product, index) => (
+            <Tr key={index}>
+              <Td>
+                <Image
+                  src={`http://${baseURL}/static/${product.image}`}
+                  alt={product.name}
+                  boxSize="75px" // Adjust size as needed
+                  objectFit="cover"
+                  fallbackSrc="https://st2.depositphotos.com/1006899/8089/i/450/depositphotos_80897014-stock-photo-page-not-found.jpg"
+                />
+              </Td>
+              <Td>{product.name}</Td>
+              <Td>{formatToIDR(product?.price)}</Td>
+              <Td>{product.description}</Td>
+              {user && user.userRole === "admin" && (
+                <Td>
+                  <Button variant="solid" colorScheme="blue" size="sm" mx={1}>
+                    <EditIcon />
+                  </Button>
+                  <Button variant="solid" colorScheme="red" size="sm" mx={1}>
+                    <DeleteIcon />
+                  </Button>
+                </Td>
+              )}
+              {user && user.userRole === "cashier" && (
+                <Td>
+                  <Button onClick={() => handleProductClick(product.id)}>
+                    View
+                  </Button>
+                </Td>
+              )}
+            </Tr>
+          ))}
           {products.map((product, index) => {
             return (
               <Tr key={index}>
@@ -300,11 +336,7 @@ function ProductTable() {
         onClose={handleCloseModal}
         productId={selectedProductId}
       />
-      <MyComponent
-        productDetail={selectedProduct}
-        isOpen={isModalUpdateProduct}
-        onClose={() => setIsModalUpdateProduct(false)}
-      />
+      {/* <MyComponent isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} /> */}
     </div>
   );
 }

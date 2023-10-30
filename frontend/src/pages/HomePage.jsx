@@ -82,14 +82,9 @@ export const HomePage = () => {
                 View Products
               </Button>
             </Link>
-            <Link to="/add-product">
+            <Link to="/transactions">
               <Button colorScheme="teal" mr={2}>
-                Add Products
-              </Button>
-            </Link>
-            <Link to="/add-cashier">
-              <Button colorScheme="teal">
-                Add Cashier
+                View Transactions
               </Button>
             </Link>
           </Flex>}

@@ -19,6 +19,7 @@ import {
   MenuItem,
   MenuList,
   useToast,
+  Skeleton
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -29,6 +30,7 @@ import {
   FiChevronDown,
   FiCalendar,
   FiShoppingCart,
+  FiClipboard,
 } from "react-icons/fi";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
@@ -48,6 +50,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
     { name: "Add Product", icon: FiPlusSquare, ref: "/add-product", show: role === 'admin' },
     { name: "Cart", icon: FiShoppingCart, ref: "/cart", show: role === 'cashier' },
     { name: "Show Product", icon: FiCalendar, ref: "/show-product" },
+    { name: "Transactions", icon: FiClipboard, ref: "/transactions", show: role === 'admin' },
   ].filter(item => item.show !== false);
 
   useEffect(() => {
@@ -73,6 +76,12 @@ const SidebarContent = ({ onClose, ...rest }) => {
     fetchUserData();
   }, []);
 
+  const skeletonItems = Array.from({ length: 5 }, (_, index) => ({
+    name: `Loading ${index + 1}`,
+    icon: FiHome, // You can use any icon you prefer
+    ref: "/",
+  }));
+
   return (
     <Box
       transition="3s ease"
@@ -88,9 +97,14 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} href={link.ref}>
-          {link.name}
-        </NavItem>
+        <Skeleton
+          key={link.name}
+          isLoaded={user !== null && role !== null} // Conditionally render the Skeleton
+        >
+          <NavItem key={link.name} icon={link.icon} href={link.ref}>
+            {link.name}
+          </NavItem>
+        </Skeleton>
       ))}
     </Box>
   );

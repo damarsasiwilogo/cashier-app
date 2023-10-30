@@ -15,6 +15,8 @@ import CashierProfile from "./pages/CashierProfile";
 import ForgotPassword from "./pages/ForgotPass";
 import ResetPassword from "./pages/ResetPass";
 import { CartPage } from "./pages/CartPage";
+import NotFoundPage from "./pages/NotFound";
+import TransactionPage from "./pages/TransactionPage";
 // import api from "./api";
 
 function App() {
@@ -33,9 +35,10 @@ function App() {
         <Route path="/show-cashier/" element={<ShowCashier />} />
         <Route path="/profile/" element={<Profile />} />
         <Route path="/cart/" element={<CartPage />} />
-        <Route path="*" element={<h1>Not Found</h1>} />
+        <Route path="*" element={<NotFoundPage />} />
         <Route path="/forgot-password/" element={<ForgotPassword />} />
-        <Route path="/reset-password/" element={<ResetPassword />} />
+        <Route path="/reset-password/:uniqueCode" element={<ResetPassword />} />
+        <Route path="/transactions" element={<TransactionPage />} />
       </Routes>
     </>
   );

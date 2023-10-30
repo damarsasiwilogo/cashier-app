@@ -5,7 +5,7 @@ import ShowCategoryModal from "../components/ShowCategoryModal";
 import CartModal from "../components/CartModal"; // <-- Import CartModal component
 import SidebarWithHeader from "../components/sidebar";
 import { Button, Box, Heading, HStack, Spacer, VStack } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api";
 
 export const ShowProduct = () => {
@@ -69,28 +69,42 @@ export const ShowProduct = () => {
             </Heading>
             <Spacer />
             {user && user.userRole === "admin" && (
-              <Button
-                onClick={() => setShowModal(true)}
-                colorScheme="teal"
+              <>
+              <Button 
+                onClick={() => setShowCategoryModal(true)} 
+                colorScheme="teal" 
                 size="sm"
+                mr={2}  // added some margin for spacing between buttons
               >
+                View Categories
+              </Button>
+              <Button onClick={() => setShowModal(true)} colorScheme="teal" size="sm">
                 Add Category
               </Button>
+            </>
             )}
             {user && user.userRole === "cashier" && (
-              <Button colorScheme="teal" size="sm">
-                View Cart
-              </Button>
+              <Link to="/cart">
+                <Button colorScheme="teal" size="sm">
+                  View Cart
+                </Button>
+              </Link>
             )}
           </HStack>
           <ProductTable products={products} />
         </VStack>
         {user && user.userRole === "admin" && (
+          <>
+          <ShowCategoryModal
+            isOpen={showCategoryModal} 
+            onClose={() => setShowCategoryModal(false)}
+          />
           <AddCategoryModal
             isOpen={showModal}
             onClose={() => setShowModal(false)}
             addCategory={addCategory}
           />
+        </>
         )}
       </Box>
     </SidebarWithHeader>
