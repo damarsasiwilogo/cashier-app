@@ -10,7 +10,7 @@ import { HomePage } from "./pages/HomePage";
 import { ShowProduct } from "./pages/ShowProduct";
 import AddCashierPage from "./pages/AddCashier";
 import Profile from "./pages/Profile";
-import ShowCashierPage from "./pages/ShowCashier";
+import ShowCashier from "./pages/ShowCashier";
 import CashierProfile from "./pages/CashierProfile";
 import ForgotPassword from "./pages/ForgotPass";
 import ResetPassword from "./pages/ResetPass";
@@ -32,9 +32,8 @@ function App() {
         <Route path="/add-product/" element={<AddProductPage />} />
         <Route path="/add-cashier/" element={<AddCashierPage />} />
         <Route path="/show-product/" element={<ShowProduct />} />
-        <Route path="/show-cashier/" element={<ShowCashierPage />} />
+        <Route path="/show-cashier/" element={<ShowCashier />} />
         <Route path="/profile/" element={<Profile />} />
-        <Route path="/cashier-profile/" element={<CashierProfile />} />
         <Route path="/cart/" element={<CartPage />} />
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/forgot-password/" element={<ForgotPassword />} />

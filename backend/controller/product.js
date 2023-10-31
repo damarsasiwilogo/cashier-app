@@ -122,6 +122,37 @@ exports.handleInActive = async (req, res) => {
   }
 };
 
+exports.handleActive = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const data = await Product.findByPk(productId);
+
+    if (data.isActive) {
+      return res.status(400).json({
+        ok: false,
+        data: data.dataValues,
+        msg: `Cannot Delete data that has been deleted!`,
+      });
+    }
+
+    data.isActive = false;
+
+    data.save();
+
+    const responseObj = data;
+
+    res.status(200).json({
+      ok: true,
+      data: responseObj,
+      msg: `Delete event with id ${productId} success!`,
+    });
+  } catch (error) {
+    res.status(400).json({
+      ok: false,
+      msg: String(error),
+    });
+  }
+};
 exports.handleCreateCategory = async (req, res) => {
   const { name } = req.body;
 
@@ -230,9 +261,7 @@ exports.getProducts = async (req, res) => {
   }
 
   // Construct the where clause for the query
-  const whereConditions = {
-    isActive: true,
-  };
+  const whereConditions = {};
 
   if (req.filtering.name) {
     whereConditions.name = req.filtering.name;
@@ -350,10 +379,10 @@ exports.sortProducts = (req, res, next) => {
   const filterParams = {};
 
   if (qname) {
-    if (typeof qname !== 'string') {
+    if (typeof qname !== "string") {
       return res.status(400).json({
-        status: 'error',
-        message: 'Invalid qname parameter. Must be a string.',
+        status: "error",
+        message: "Invalid qname parameter. Must be a string.",
       });
     }
     // Create an Op.like pattern for the filtering by name
@@ -363,15 +392,15 @@ exports.sortProducts = (req, res, next) => {
   if (categoryId) {
     if (isNaN(Number(categoryId))) {
       return res.status(400).json({
-        status: 'error',
-        message: 'Invalid categoryId parameter. Must be a number.',
+        status: "error",
+        message: "Invalid categoryId parameter. Must be a number.",
       });
     }
     // Directly assign categoryId for filtering
     filterParams.categoryId = categoryId;
   }
 
-  // Attach filtering parameters to request 
+  // Attach filtering parameters to request
   console.log(filterParams);
   req.filtering = filterParams;
 

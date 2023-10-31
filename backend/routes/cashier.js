@@ -9,5 +9,11 @@ router.post(
   authMiddleware.validateToken,
   cashierController.handleCreateCashier
 );
+router.get(
+  "/:username",
+  authMiddleware.validateToken,
+  cashierController.handleGetCashier
+);
+router.get("/", authMiddleware.validateToken, cashierController.getAllCashier);
 
 module.exports = router;

@@ -52,6 +52,12 @@ router.patch(
   multerUpload.multerUpload.single("image"),
   productController.handleUpdateProduct
 );
+router.patch(
+  "/activate/:Id",
+  authMiddleware.validateToken,
+  authMiddleware.checkUserRole,
+  productController.handleActive
+);
 router.delete(
   "/:productId",
   authMiddleware.validateToken,
@@ -59,11 +65,11 @@ router.delete(
   productController.handleInActive
 );
 router.get(
-  "/:page", 
+  "/:page",
   authMiddleware.validateToken,
   productController.sortProducts,
   productController.getProducts
-  );
+);
 router.get(
   "/detail/:productId",
   authMiddleware.validateToken,
