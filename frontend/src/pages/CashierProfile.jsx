@@ -196,7 +196,8 @@ export default function UserProfileEdit() {
           rounded={"xl"}
           boxShadow={"lg"}
           p={6}
-          my={12}>
+          my={12}
+        >
           <Heading lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl" }}>
             Edit Profile
           </Heading>
@@ -211,7 +212,8 @@ export default function UserProfileEdit() {
                       userData
                         ? `http://${baseURL}/static/${userData.photoProfile}`
                         : "https://www.adebayosegun.com/_next/image?url=%2Fstatic%2Fimages%2Fsegun-adebayo-headshot.jpg&w=3840&q=75"
-                    }>
+                    }
+                  >
                     {/* <AvatarBadge
                         as={IconButton}
                         size="sm"
@@ -357,7 +359,8 @@ export default function UserProfileEdit() {
                 _hover={{
                   bg: "red.500",
                 }}
-                type="submit">
+                type="submit"
+              >
                 Submit
               </Button>
             </Flex>
